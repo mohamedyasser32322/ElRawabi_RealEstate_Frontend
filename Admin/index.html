@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>الروابي للعقارات</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css"/>
+  <style>
+    /* ══ RESET + ROOT ══ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary:      #0D2142;
+      --primary-deep: #081830;
+      --card-bg:      #112952;
+      --card-hover:   #163366;
+      --border:       rgba(255,255,255,0.08);
+      --border-hover: rgba(255,255,255,0.2);
+      --light:        #FFFFFF;
+      --text-muted:   #8fa3c0;
+      --success:      #34c759;
+      --warning:      #ffcc00;
+      --danger:       #ff3b30;
+      --accent:       #4e8df5;
+      --header-h:     64px;
+      --transition:   all 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    html, body {
+      font-family: 'Tajawal', sans-serif;
+      background: var(--primary-deep);
+      color: var(--light);
+      min-height: 100vh;
+      direction: rtl;
+      overflow-x: hidden;
+    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--primary-deep); }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 6px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.28); }
+
+    /* ══ HEADER ══ */
+    #app-header {
+      position: fixed; top: 0; right: 0; left: 0;
+      height: var(--header-h); z-index: 900;
+      background: rgba(8,24,48,0.97);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px; gap: 16px;
+    }
+
+    /* Left section: logo + page label */
+    .header-right {
+      display: flex; align-items: center; gap: 16px;
+      flex-shrink: 0; min-width: 0;
+    }
+    .header-logo {
+      font-size: 1.15rem; font-weight: 800; color: var(--light);
+      letter-spacing: -0.3px; white-space: nowrap;
+      cursor: pointer; transition: var(--transition);
+      text-decoration: none;
+    }
+    .header-logo:hover { opacity: 0.75; }
+    .header-divider { width: 1px; height: 26px; background: var(--border); flex-shrink: 0; }
+    .header-page-label { display: flex; flex-direction: column; gap: 2px; overflow: hidden; }
+    .header-page-title {
+      font-size: .95rem; font-weight: 700; color: var(--light);
+      line-height: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .header-role-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 0.68rem; font-weight: 600;
+      color: var(--warning); background: rgba(255,204,0,0.1);
+      border: 1px solid rgba(255,204,0,0.28);
+      padding: 2px 8px; border-radius: 20px; width: fit-content;
+    }
+
+    /* Center nav — desktop only */
+    .header-nav {
+      display: flex; align-items: center; gap: 4px;
+      flex: 1; justify-content: center;
+    }
+    .nav-tab {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 13px; border-radius: 10px;
+      cursor: pointer; color: var(--text-muted);
+      font-size: 0.84rem; font-weight: 600;
+      border: 1px solid transparent;
+      transition: var(--transition); white-space: nowrap;
+      background: none; font-family: 'Tajawal', sans-serif;
+      text-decoration: none;
+    }
+    .nav-tab i { font-size: 1rem; }
+    .nav-tab:hover { color: var(--light); background: rgba(255,255,255,0.06); border-color: var(--border); }
+    .nav-tab.active { color: var(--light); background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
+
+    /* Right: user + logout + hamburger */
+    .header-left { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .header-user { display: flex; align-items: center; gap: 8px; }
+    .user-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #2563eb);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; font-weight: 800; color: white;
+      border: 2px solid rgba(255,255,255,0.15); flex-shrink: 0;
+      cursor: pointer;
+    }
+    .user-name { font-size: 0.88rem; font-weight: 700; color: var(--light); white-space: nowrap; }
+    .logout-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 7px 14px; border-radius: 9px;
+      background: rgba(255,59,48,0.1); color: var(--danger);
+      border: 1px solid rgba(255,59,48,0.28);
+      cursor: pointer; font-family: 'Tajawal', sans-serif;
+      font-size: 0.82rem; font-weight: 700;
+      transition: var(--transition); white-space: nowrap;
+    }
+    .logout-btn:hover { background: rgba(255,59,48,0.22); transform: translateY(-1px); }
+
+    /* ══ HAMBURGER BUTTON ══ */
+    .hamburger {
+      display: none;
+      flex-direction: column; justify-content: center; align-items: center;
+      gap: 5px; width: 38px; height: 38px; border-radius: 9px;
+      background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+      cursor: pointer; padding: 8px; flex-shrink: 0;
+      transition: var(--transition);
+    }
+    .hamburger:hover { background: rgba(255,255,255,0.1); border-color: var(--border-hover); }
+    .hamburger span {
+      display: block; width: 18px; height: 2px;
+      background: var(--light); border-radius: 2px;
+      transition: var(--transition); transform-origin: center;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* ══ MOBILE DRAWER ══ */
+    #drawer-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6); z-index: 1000;
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+      opacity: 0; transition: opacity 0.3s ease;
+    }
+    #drawer-overlay.open { display: block; opacity: 1; }
+
+    #mobile-drawer {
+      position: fixed; top: 0; right: 0; bottom: 0;
+      width: 280px; max-width: 85vw;
+      z-index: 1001;
+      background: rgba(8,20,46,0.99);
+      border-left: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.32s cubic-bezier(0.4,0,0.2,1);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      overflow-y: auto;
+    }
+    #mobile-drawer.open { transform: translateX(0); }
+
+    .drawer-header {
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .drawer-logo { font-size: 1.1rem; font-weight: 800; color: var(--light); }
+    .drawer-close {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+      color: var(--text-muted); cursor: pointer; font-size: 1.1rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: var(--transition);
+    }
+    .drawer-close:hover { color: var(--light); background: rgba(255,255,255,0.1); }
+
+    .drawer-user {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .drawer-user .user-avatar { width: 40px; height: 40px; font-size: .9rem; }
+    .drawer-user-info .user-name { font-size: .9rem; }
+    .drawer-user-info .drawer-role {
+      font-size: .72rem; color: var(--warning);
+      margin-top: 3px;
+    }
+
+    .drawer-nav {
+      flex: 1; padding: 12px 12px;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .drawer-nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 14px; border-radius: 12px;
+      cursor: pointer; color: var(--text-muted);
+      font-size: 0.95rem; font-weight: 600;
+      border: 1px solid transparent;
+      transition: var(--transition);
+      background: none; font-family: 'Tajawal', sans-serif;
+      width: 100%; text-align: right;
+    }
+    .drawer-nav-item i { font-size: 1.15rem; flex-shrink: 0; }
+    .drawer-nav-item:hover {
+      color: var(--light); background: rgba(255,255,255,0.06);
+      border-color: var(--border);
+    }
+    .drawer-nav-item.active {
+      color: var(--accent); background: rgba(78,141,245,0.12);
+      border-color: rgba(78,141,245,0.25);
+    }
+    .drawer-nav-item.active i { color: var(--accent); }
+
+    .drawer-footer {
+      padding: 16px 12px;
+      border-top: 1px solid var(--border);
+    }
+    .drawer-logout {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 14px; border-radius: 12px;
+      background: rgba(255,59,48,0.08); color: var(--danger);
+      border: 1px solid rgba(255,59,48,0.2);
+      cursor: pointer; font-family: 'Tajawal', sans-serif;
+      font-size: 0.9rem; font-weight: 700;
+      transition: var(--transition); width: 100%;
+    }
+    .drawer-logout:hover { background: rgba(255,59,48,0.18); }
+    .drawer-logout i { font-size: 1.1rem; }
+
+    /* ══ MAIN CONTENT ══ */
+    #app-main {
+      margin-top: var(--header-h);
+      min-height: calc(100vh - var(--header-h));
+      padding: 36px 36px 80px;
+      max-width: 1400px;
+      margin-left: auto; margin-right: auto;
+      transition: opacity 0.12s ease;
+    }
+
+    /* ══ TOAST ══ */
+    .toast {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 18px; border-radius: 12px;
+      background: rgba(17,41,82,0.97); border: 1px solid rgba(255,255,255,0.12);
+      color: #fff; font-size: 0.88rem; font-weight: 600;
+      backdrop-filter: blur(12px); box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      animation: slideUp 0.3s ease; white-space: nowrap;
+      font-family: 'Tajawal', sans-serif;
+    }
+    .toast.ok, .toast.success { border-color: rgba(52,199,89,0.35); color: #52d96f; }
+    .toast.err, .toast.error  { border-color: rgba(255,59,48,0.35);  color: #ff7b72; }
+    .toast.info                { border-color: rgba(78,141,245,0.35); color: #7ab3ff; }
+
+    /* ══ ANIMATIONS ══ */
+    @keyframes fadeIn  { from{opacity:0}to{opacity:1} }
+    @keyframes slideUp { from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)} }
+    @keyframes fadeUp  { from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)} }
+    @keyframes countUp { from{opacity:0;transform:scale(0.85)}to{opacity:1;transform:scale(1)} }
+    @keyframes spin    { to{transform:rotate(360deg)} }
+    @keyframes shimmer { 0%{background-position:200% 0}100%{background-position:-200% 0} }
+
+    /* ══ DASHBOARD ══ */
+    .page-header { margin-bottom: 28px; animation: fadeUp 0.5s ease both; }
+    .page-header h1 { font-size: 1.6rem; font-weight: 800; color: var(--light); margin-bottom: 4px; }
+    .page-header p  { color: var(--text-muted); font-size: 0.9rem; }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px; margin-bottom: 28px;
+    }
+    .stat-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 16px; padding: 20px;
+      display: flex; flex-direction: column; gap: 10px;
+      opacity: 0; animation: fadeUp 0.5s ease forwards;
+      transition: var(--transition); position: relative; overflow: hidden;
+    }
+    .stat-card::before {
+      content:''; position:absolute; inset:0;
+      background: linear-gradient(135deg,rgba(255,255,255,.03) 0%,transparent 60%);
+      pointer-events:none;
+    }
+    .stat-card:hover { transform:translateY(-5px); border-color:var(--border-hover); box-shadow:0 20px 48px rgba(0,0,0,.45); background:var(--card-hover); }
+    .stat-top { display:flex; justify-content:space-between; align-items:flex-start; }
+    .stat-icon { width:44px; height:44px; border-radius:13px; display:flex; align-items:center; justify-content:center; font-size:1.3rem; flex-shrink:0; }
+    .stat-number { font-size:2.2rem; font-weight:800; line-height:1; animation:countUp .6s ease both; }
+    .stat-label  { font-size:.78rem; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:.5px; margin-top:2px; }
+    .stat-card.blue   .stat-icon   { background:rgba(78,141,245,.15);  color:var(--accent);  }
+    .stat-card.green  .stat-icon   { background:rgba(52,199,89,.15);   color:var(--success); }
+    .stat-card.yellow .stat-icon   { background:rgba(255,204,0,.15);   color:var(--warning); }
+    .stat-card.red    .stat-icon   { background:rgba(255,59,48,.15);   color:var(--danger);  }
+    .stat-card.purple .stat-icon   { background:rgba(175,82,222,.15);  color:#af52de;        }
+    .stat-card.teal   .stat-icon   { background:rgba(90,200,250,.15);  color:#5ac8fa;        }
+    .stat-card.blue   .stat-number { color:var(--accent);  }
+    .stat-card.green  .stat-number { color:var(--success); }
+    .stat-card.yellow .stat-number { color:var(--warning); }
+    .stat-card.red    .stat-number { color:var(--danger);  }
+    .stat-card.purple .stat-number { color:#af52de;        }
+    .stat-card.teal   .stat-number { color:#5ac8fa;        }
+
+    .bottom-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .panel {
+      background:var(--card-bg); border:1px solid var(--border);
+      border-radius:16px; padding:22px;
+      opacity:0; animation:fadeUp .5s ease forwards; animation-delay:.35s;
+    }
+    .panel-title { font-size:.95rem; font-weight:700; color:var(--light); margin-bottom:18px; display:flex; align-items:center; gap:8px; }
+    .panel-title i { color:var(--text-muted); font-size:1.05rem; }
+    .prog-item { margin-bottom:16px; }
+    .prog-item:last-child { margin-bottom:0; }
+    .prog-header { display:flex; justify-content:space-between; margin-bottom:7px; font-size:.84rem; font-weight:600; }
+    .prog-header .prog-name { color:var(--light); }
+    .prog-header .prog-pct  { color:var(--text-muted); }
+    .prog-track { height:7px; background:rgba(255,255,255,.06); border-radius:20px; overflow:hidden; }
+    .prog-fill  { height:100%; border-radius:20px; transition:width 1s ease; }
+    .occupancy-wrapper { display:flex; align-items:center; gap:24px; }
+    .ring-container { position:relative; width:120px; height:120px; flex-shrink:0; }
+    .ring-svg  { transform:rotate(-90deg); }
+    .ring-bg   { fill:none; stroke:rgba(255,255,255,.06); stroke-width:10; }
+    .ring-fill { fill:none; stroke-width:10; stroke-linecap:round; transition:stroke-dashoffset 1.2s ease; }
+    .ring-label { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+    .ring-pct  { font-size:1.5rem; font-weight:800; color:var(--light); line-height:1; }
+    .ring-sub  { font-size:.68rem; color:var(--text-muted); font-weight:600; margin-top:3px; }
+    .legend-list { display:flex; flex-direction:column; gap:9px; }
+    .legend-row  { display:flex; align-items:center; gap:8px; font-size:.82rem; font-weight:600; color:var(--text-muted); }
+    .legend-dot  { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+    .legend-row strong { color:var(--light); margin-right:auto; }
+
+    .skel {
+      background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%);
+      background-size:200% 100%; animation:shimmer 1.5s infinite; border-radius:16px;
+    }
+
+    /* ══ RESPONSIVE BREAKPOINTS ══ */
+
+    /* Tablet: hide nav labels */
+    @media (max-width: 1100px) {
+      .nav-tab span { display: none; }
+      .nav-tab { padding: 8px 10px; }
+    }
+
+    /* Mobile: hide desktop nav, show hamburger */
+    @media (max-width: 768px) {
+      #app-header { padding: 0 16px; gap: 10px; }
+
+      .header-nav { display: none; }          /* ← hide desktop tabs */
+      .hamburger  { display: flex; }          /* ← show hamburger */
+
+      .logout-btn { display: none; }          /* logout is in drawer */
+      .user-name  { display: none; }
+
+      #app-main { padding: 20px 16px 80px; }
+
+      .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .stat-number { font-size: 1.7rem; }
+      .stat-icon { width: 38px; height: 38px; font-size: 1.1rem; }
+      .stat-card { padding: 16px; }
+
+      .bottom-grid { grid-template-columns: 1fr; }
+      .occupancy-wrapper { flex-direction: column; align-items: flex-start; }
+
+      .header-divider { display: none; }
+    }
+
+    /* Small phones */
+    @media (max-width: 400px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .stat-number { font-size: 1.5rem; }
+      .header-page-label { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══ HEADER ══ -->
+  <header id="app-header">
+    <!-- Built by initLayout() in Layout.js -->
+  </header>
+
+  <!-- ══ MOBILE DRAWER OVERLAY ══ -->
+  <div id="drawer-overlay" onclick="closeDrawer()"></div>
+
+  <!-- ══ MOBILE DRAWER ══ -->
+  <nav id="mobile-drawer">
+    <div class="drawer-header">
+      <span class="drawer-logo">الروابي للعقارات</span>
+      <button class="drawer-close" onclick="closeDrawer()">
+        <i class="ri-close-line"></i>
+      </button>
+    </div>
+
+    <div class="drawer-user" id="drawer-user-info">
+      <div class="user-avatar" id="drawer-avatar">؟</div>
+      <div class="drawer-user-info">
+        <div class="user-name" id="drawer-username">—</div>
+        <div class="drawer-role" id="drawer-role">—</div>
+      </div>
+    </div>
+
+    <div class="drawer-nav" id="drawer-nav">
+      <!-- Filled by initLayout -->
+    </div>
+
+    <div class="drawer-footer">
+      <button class="drawer-logout" onclick="handleLogout()">
+        <i class="ri-logout-box-r-line"></i>
+        تسجيل الخروج
+      </button>
+    </div>
+  </nav>
+
+  <!-- ══ MAIN ══ -->
+  <main id="app-main">
+    <div style="display:flex;align-items:center;justify-content:center;min-height:60vh">
+      <div style="width:36px;height:36px;border:3px solid rgba(255,255,255,0.08);border-top-color:var(--accent);border-radius:50%;animation:spin 0.75s linear infinite"></div>
+    </div>
+  </main>
+
+  <!-- ══ SCRIPTS ══ -->
+  <script src="Layout.js"></script>
+  <script src="router.js"></script>
+
+  <script>
+  /* ══ Drawer helpers ══ */
+  function openDrawer() {
+    document.getElementById('mobile-drawer').classList.add('open');
+    document.getElementById('drawer-overlay').classList.add('open');
+    document.querySelector('.hamburger')?.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeDrawer() {
+    document.getElementById('mobile-drawer').classList.remove('open');
+    document.getElementById('drawer-overlay').classList.remove('open');
+    document.querySelector('.hamburger')?.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  // Close drawer on ESC
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+
+  /* ══ Static HTML shells ══ */
+  window.__pageHTML = {
+
+    users: `
+      <div style="padding:0">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px">
+          <div>
+            <h1 style="font-size:1.4rem;font-weight:800;margin-bottom:4px">إدارة المستخدمين</h1>
+            <p style="color:var(--text-muted);font-size:.88rem">إدارة المستخدمين والصلاحيات</p>
+          </div>
+          <button onclick="openUserModal()" style="display:flex;align-items:center;gap:7px;padding:9px 18px;border-radius:10px;background:var(--accent);color:#fff;border:none;font-family:inherit;font-size:.88rem;font-weight:700;cursor:pointer">
+            <i class="ri-add-line"></i> مستخدم جديد
+          </button>
+        </div>
+        <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:16px;overflow:hidden">
+          <div style="overflow-x:auto">
+            <table style="width:100%;border-collapse:collapse;min-width:560px">
+              <thead>
+                <tr style="border-bottom:1px solid var(--border)">
+                  <th style="padding:13px 16px;text-align:right;font-size:.78rem;color:var(--text-muted);font-weight:700">المستخدم</th>
+                  <th style="padding:13px 16px;text-align:right;font-size:.78rem;color:var(--text-muted);font-weight:700">الدور</th>
+                  <th style="padding:13px 16px;text-align:right;font-size:.78rem;color:var(--text-muted);font-weight:700">الحالة</th>
+                  <th style="padding:13px 16px;text-align:right;font-size:.78rem;color:var(--text-muted);font-weight:700">تاريخ الانضمام</th>
+                  <th style="padding:13px 16px;text-align:right;font-size:.78rem;color:var(--text-muted);font-weight:700">الإجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="usersTable">
+                <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:40px">
+                  <i class="ri-loader-4-line" style="animation:spin 1s linear infinite;display:inline-block;margin-left:8px"></i> جاري التحميل...
+                </td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div id="userModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(6px)">
+        <div style="background:rgba(13,33,66,.98);border:1px solid rgba(255,255,255,.12);border-radius:20px;max-width:480px;width:92%;padding:28px 28px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 48px rgba(0,0,0,.5)">
+          <h2 id="modalTitle" style="font-size:1.1rem;font-weight:800;margin-bottom:22px;color:var(--light)">مستخدم جديد</h2>
+          <form id="userForm">
+            <input type="hidden" id="userId" value="">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+              <div>
+                <label style="display:block;font-size:.83rem;font-weight:700;margin-bottom:6px">الاسم الأول *</label>
+                <input type="text" id="firstName" style="width:100%;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);color:#fff;font-family:inherit;font-size:.88rem" required>
+              </div>
+              <div>
+                <label style="display:block;font-size:.83rem;font-weight:700;margin-bottom:6px">الاسم الأخير *</label>
+                <input type="text" id="lastName" style="width:100%;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);color:#fff;font-family:inherit;font-size:.88rem" required>
+              </div>
+            </div>
+            <div style="margin-bottom:14px">
+              <label style="display:block;font-size:.83rem;font-weight:700;margin-bottom:6px">البريد الإلكتروني *</label>
+              <input type="email" id="email" style="width:100%;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);color:#fff;font-family:inherit;font-size:.88rem;direction:ltr;text-align:left" required>
+            </div>
+            <div style="margin-bottom:14px" id="passwordGroup">
+              <label style="display:block;font-size:.83rem;font-weight:700;margin-bottom:6px">كلمة المرور *</label>
+              <input type="password" id="password" style="width:100%;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);color:#fff;font-family:inherit;font-size:.88rem">
+            </div>
+            <div style="margin-bottom:14px">
+              <label style="display:block;font-size:.83rem;font-weight:700;margin-bottom:6px">الدور الوظيفي *</label>
+              <select id="roleId" style="width:100%;padding:10px 12px;border-radius:10px;background:#0d2040;border:1.5px solid rgba(255,255,255,.1);color:#fff;font-family:inherit;font-size:.88rem;cursor:pointer;color-scheme:dark" required>
+                <option value="">اختر الدور...</option>
+                <option value="1">مدير النظام</option>
+                <option value="2">مدير الحجوزات</option>
+                <option value="3">مهندس الموقع</option>
+              </select>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding:11px 13px;background:rgba(255,255,255,.03);border-radius:10px;border:1px solid var(--border)">
+              <div style="display:flex;align-items:center;gap:8px;font-size:.88rem;font-weight:600"><i class="ri-shield-check-line"></i> حالة الحساب</div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <span id="statusText" style="font-size:.85rem;font-weight:700;color:var(--success)">نشط</span>
+                <input type="checkbox" id="isActive" checked style="width:17px;height:17px;accent-color:var(--success);cursor:pointer">
+              </div>
+            </div>
+            <div style="display:flex;gap:10px;justify-content:flex-end">
+              <button type="submit" id="submitBtn" style="display:flex;align-items:center;gap:6px;padding:10px 20px;border-radius:10px;background:var(--accent);color:#fff;border:none;font-family:inherit;font-size:.9rem;font-weight:700;cursor:pointer">
+                <i class="ri-save-line"></i> حفظ
+              </button>
+              <button type="button" onclick="closeUserModal()" style="padding:10px 16px;border-radius:10px;background:rgba(255,255,255,.06);color:var(--text-muted);border:1px solid var(--border);font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer">إلغاء</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div id="toast-container" style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none"></div>
+    `,
+
+    log: `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:12px">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:40px;height:40px;border-radius:11px;background:rgba(78,141,245,.15);display:flex;align-items:center;justify-content:center;font-size:1.15rem;color:var(--accent)"><i class="ri-file-list-3-line"></i></div>
+          <div>
+            <div style="font-size:1.05rem;font-weight:800">سجل النشاطات</div>
+            <div style="font-size:.78rem;color:var(--text-muted)">جميع العمليات على النظام</div>
+          </div>
+        </div>
+        <button onclick="loadLogs()" style="display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:10px;background:var(--accent);color:#fff;border:none;font-family:inherit;font-size:.85rem;font-weight:700;cursor:pointer">
+          <i class="ri-refresh-line" id="refreshIco"></i> تحديث
+        </button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:18px">
+        <div style="display:flex;align-items:center;gap:11px;background:var(--card-bg);border:1px solid var(--border);border-radius:13px;padding:14px">
+          <div style="width:36px;height:36px;border-radius:9px;background:rgba(78,141,245,.15);display:flex;align-items:center;justify-content:center;color:var(--accent)"><i class="ri-file-list-3-line"></i></div>
+          <div><div id="sTotal" style="font-size:1.3rem;font-weight:800">0</div><div style="font-size:.7rem;color:var(--text-muted)">إجمالي</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:11px;background:var(--card-bg);border:1px solid var(--border);border-radius:13px;padding:14px">
+          <div style="width:36px;height:36px;border-radius:9px;background:rgba(52,199,89,.15);display:flex;align-items:center;justify-content:center;color:var(--success)"><i class="ri-add-circle-line"></i></div>
+          <div><div id="sCreate" style="font-size:1.3rem;font-weight:800">0</div><div style="font-size:.7rem;color:var(--text-muted)">إضافة</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:11px;background:var(--card-bg);border:1px solid var(--border);border-radius:13px;padding:14px">
+          <div style="width:36px;height:36px;border-radius:9px;background:rgba(255,204,0,.15);display:flex;align-items:center;justify-content:center;color:var(--warning)"><i class="ri-edit-line"></i></div>
+          <div><div id="sUpdate" style="font-size:1.3rem;font-weight:800">0</div><div style="font-size:.7rem;color:var(--text-muted)">تعديل</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:11px;background:var(--card-bg);border:1px solid var(--border);border-radius:13px;padding:14px">
+          <div style="width:36px;height:36px;border-radius:9px;background:rgba(255,59,48,.15);display:flex;align-items:center;justify-content:center;color:var(--danger)"><i class="ri-delete-bin-line"></i></div>
+          <div><div id="sDelete" style="font-size:1.3rem;font-weight:800">0</div><div style="font-size:.7rem;color:var(--text-muted)">حذف</div></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+        <div style="position:relative;flex:1;min-width:180px">
+          <i class="ri-search-line" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none"></i>
+          <input id="sInput" oninput="handleSearch()" type="text" placeholder="بحث..." style="width:100%;padding:9px 36px 9px 13px;border-radius:10px;background:rgba(255,255,255,.05);border:1.5px solid var(--border);color:#fff;font-family:inherit;font-size:.88rem"/>
+        </div>
+        <select id="aFilter" onchange="applyFilters()" style="padding:9px 12px;border-radius:10px;background:#0d2040;border:1.5px solid var(--border);color:#fff;font-family:inherit;font-size:.83rem;cursor:pointer;color-scheme:dark">
+          <option value="all">جميع الإجراءات</option>
+          <option value="create">إضافة</option>
+          <option value="update">تعديل</option>
+          <option value="delete">حذف</option>
+          <option value="login">دخول</option>
+          <option value="other">أخرى</option>
+        </select>
+        <select id="eFilter" onchange="applyFilters()" style="padding:9px 12px;border-radius:10px;background:#0d2040;border:1.5px solid var(--border);color:#fff;font-family:inherit;font-size:.83rem;cursor:pointer;color-scheme:dark">
+          <option value="all">جميع الكيانات</option>
+        </select>
+        <span id="resCount" style="font-size:.8rem;color:var(--text-muted);white-space:nowrap">0 سجل</span>
+      </div>
+      <div id="tableArea"></div>
+      <div id="pgWrap" style="display:flex;justify-content:center;gap:7px;margin-top:18px;flex-wrap:wrap"></div>
+      <div id="mOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(6px)" onclick="handleOverlayClick(event)">
+        <div id="modal" style="background:rgba(13,33,66,.98);border:1px solid rgba(255,255,255,.12);border-radius:20px;max-width:560px;width:92%;max-height:88vh;overflow-y:auto;box-shadow:0 24px 48px rgba(0,0,0,.5)">
+          <div style="display:flex;align-items:center;gap:12px;padding:18px 22px 14px;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(13,33,66,.99);border-radius:20px 20px 0 0">
+            <div id="mHeadIco" style="width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex-shrink:0"></div>
+            <div style="flex:1">
+              <div id="mHeadTitle" style="font-size:.95rem;font-weight:800;color:var(--light)">تفاصيل السجل</div>
+              <div id="mHeadSub" style="font-size:.75rem;color:var(--text-muted);margin-top:2px"></div>
+            </div>
+            <button onclick="closeModal()" style="background:none;border:none;color:var(--text-muted);font-size:1.25rem;cursor:pointer"><i class="ri-close-line"></i></button>
+          </div>
+          <div id="mBody" style="padding:18px 22px"></div>
+        </div>
+      </div>
+      <div id="toastWrap" style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none"></div>
+    `,
+  };
+
+  /* ══ Dashboard HTML ══ */
+  window.__dashboardHTML = `
+    <div class="page-header">
+      <h1>لوحة المعلومات</h1>
+    </div>
+    <div class="stats-grid" id="dash-stats">
+      ${Array(8).fill('<div class="skel" style="height:106px"></div>').join('')}
+    </div>
+    <div class="bottom-grid" id="dash-bottom">
+      <div class="skel" style="height:240px"></div>
+      <div class="skel" style="height:240px"></div>
+    </div>
+  `;
+
+  /* ══ Dashboard data loader ══ */
+  async function loadDashboard() {
+    function getToken(){
+      let t=localStorage.getItem('token')||localStorage.getItem('authToken');
+      if(!t){try{const d=localStorage.getItem('authData');t=d?JSON.parse(d).token:null;}catch{}}
+      return t||'';
+    }
+    const API=`http://${location.hostname}:5256`;
+    async function get(p){
+      const r=await fetch(API+p,{headers:{'Authorization':'Bearer '+getToken()}});
+      if(!r.ok)throw new Error(r.status); return r.json().catch(()=>null);
+    }
+    function arr(v){return Array.isArray(v)?v:(v?.data||v?.items||v?.value||v?.results||[]);}
+    function toStatus(v){
+      if(typeof v==='number')return v;
+      return{available:1,reserved:2,sold:3,closed:4,Available:1,Reserved:2,Sold:3,Closed:4}[v]??4;
+    }
+    try {
+      const[pd,bd,ud,byd]=await Promise.all([
+        get('/api/Projects').catch(()=>null),
+        get('/api/Buildings').catch(()=>null),
+        get('/api/Units').catch(()=>null),
+        get('/api/Buyers').catch(()=>null),
+      ]);
+      const P=arr(pd),B=arr(bd),U=arr(ud),BY=arr(byd);
+      const avail=U.filter(u=>toStatus(u.status??u.Status)===1).length;
+      const resrv=U.filter(u=>toStatus(u.status??u.Status)===2).length;
+      const sold =U.filter(u=>toStatus(u.status??u.Status)===3).length;
+      const closd=U.filter(u=>toStatus(u.status??u.Status)===4).length;
+      const total=U.length;
+      const occ=total?Math.round((resrv+sold)/total*100):0;
+
+      const statsEl=document.getElementById('dash-stats');
+      if(!statsEl)return;
+      const cards=[
+        {cls:'blue',   icon:'ri-home-4-line',         num:P.length,  lbl:'المشاريع'},
+        {cls:'teal',   icon:'ri-building-2-line',      num:B.length,  lbl:'المباني'},
+        {cls:'blue',   icon:'ri-layout-grid-line',     num:total,     lbl:'إجمالي الوحدات'},
+        {cls:'green',  icon:'ri-checkbox-circle-line', num:avail,     lbl:'متاح'},
+        {cls:'yellow', icon:'ri-time-line',            num:resrv,     lbl:'محجوز'},
+        {cls:'red',    icon:'ri-price-tag-3-line',     num:sold,      lbl:'مباع'},
+        {cls:'purple', icon:'ri-lock-line',            num:closd,     lbl:'مقفول'},
+        {cls:'green',  icon:'ri-group-line',           num:BY.length, lbl:'العملاء'},
+      ];
+      statsEl.innerHTML=cards.map((c,i)=>`
+        <div class="stat-card ${c.cls}" style="animation-delay:${i*50}ms">
+          <div class="stat-top">
+            <div>
+              <div class="stat-number">${c.num.toLocaleString('ar-SA')}</div>
+              <div class="stat-label">${c.lbl}</div>
+            </div>
+            <div class="stat-icon"><i class="${c.icon}"></i></div>
+          </div>
+        </div>`).join('');
+
+      const circ=2*Math.PI*52, off=circ-(occ/100)*circ;
+      const bottomEl=document.getElementById('dash-bottom');
+      if(!bottomEl)return;
+      bottomEl.innerHTML=`
+        <div class="panel">
+          <div class="panel-title"><i class="ri-pie-chart-2-line"></i> نسبة الإشغال</div>
+          <div class="occupancy-wrapper">
+            <div class="ring-container">
+              <svg class="ring-svg" viewBox="0 0 120 120" width="120" height="120">
+                <circle class="ring-bg" cx="60" cy="60" r="52"/>
+                <circle class="ring-fill" cx="60" cy="60" r="52" stroke="var(--accent)"
+                  stroke-dasharray="${circ}" stroke-dashoffset="${off}"/>
+              </svg>
+              <div class="ring-label">
+                <div class="ring-pct">${occ}%</div>
+                <div class="ring-sub">مشغول</div>
+              </div>
+            </div>
+            <div class="legend-list">
+              <div class="legend-row"><div class="legend-dot" style="background:var(--success)"></div>متاح<strong>${avail}</strong></div>
+              <div class="legend-row"><div class="legend-dot" style="background:var(--warning)"></div>محجوز<strong>${resrv}</strong></div>
+              <div class="legend-row"><div class="legend-dot" style="background:var(--danger)"></div>مباع<strong>${sold}</strong></div>
+              <div class="legend-row"><div class="legend-dot" style="background:#6b7a8d"></div>مقفول<strong>${closd}</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-title"><i class="ri-bar-chart-2-line"></i> توزيع الوحدات</div>
+          ${total>0?['متاح','محجوز','مباع','مقفول'].map((lbl,i)=>{
+            const nums=[avail,resrv,sold,closd];
+            const colors=['var(--success)','var(--warning)','var(--danger)','#6b7a8d'];
+            const pct=Math.round(nums[i]/total*100);
+            return `<div class="prog-item">
+              <div class="prog-header"><span class="prog-name">${lbl}</span><span class="prog-pct">${pct}%</span></div>
+              <div class="prog-track"><div class="prog-fill" style="width:${pct}%;background:${colors[i]}"></div></div>
+            </div>`;
+          }).join(''):'<p style="color:var(--text-muted);font-size:.9rem">لا توجد بيانات بعد</p>'}
+        </div>`;
+    } catch(e){ console.error('Dashboard error:',e); }
+  }
+
+  /* ══ Patch initLayout to also fill drawer ══ */
+  const _origInitLayout = window.initLayout;
+  window.initLayout = function() {
+    _origInitLayout?.();
+
+    // Fill drawer user info
+    const userData = typeof getUserData==='function' ? getUserData() : null;
+    const userName = userData?.email ? userData.email.split('@')[0] : '—';
+    const userRole = userData?.role || '—';
+    const initials = userName !== '—' ? userName.slice(0,2).toUpperCase() : '؟';
+
+    const drawerAvatar = document.getElementById('drawer-avatar');
+    const drawerUser   = document.getElementById('drawer-username');
+    const drawerRole   = document.getElementById('drawer-role');
+    if (drawerAvatar) drawerAvatar.textContent = initials;
+    if (drawerUser)   drawerUser.textContent   = userName;
+    if (drawerRole)   drawerRole.textContent   = userRole;
+
+    // Build drawer nav items
+    const LAYOUT_CONFIG_NAV = [
+      { id:'dashboard',    label:'لوحة التحكم', icon:'ri-dashboard-3-line'   },
+      { id:'projects',     label:'المشاريع',    icon:'ri-building-4-line'     },
+      { id:'buildings',    label:'البناء',       icon:'ri-community-line'      },
+      { id:'reservations', label:'الحجوزات',    icon:'ri-calendar-check-line' },
+      { id:'users',        label:'المستخدمين',  icon:'ri-user-settings-line'  },
+      { id:'buyers',       label:'المشترين',    icon:'ri-group-line'          },
+      { id:'log',          label:'السجل',       icon:'ri-file-list-3-line'    },
+    ];
+    const drawerNav = document.getElementById('drawer-nav');
+    if (drawerNav) {
+      drawerNav.innerHTML = LAYOUT_CONFIG_NAV.map(item => `
+        <button class="drawer-nav-item" data-page="${item.id}"
+          onclick="navigateDrawer('${item.id}')">
+          <i class="${item.icon}"></i>
+          <span>${item.label}</span>
+        </button>
+      `).join('');
+    }
+  };
+
+  function navigateDrawer(pageId) {
+    closeDrawer();
+    if (typeof navigate === 'function') navigate(pageId);
+    // sync active state in drawer
+    document.querySelectorAll('.drawer-nav-item').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.page === pageId);
+    });
+  }
+
+  /* Keep drawer active state in sync with desktop nav */
+  const _origUpdatePage = window.updatePageContent;
+  window.updatePageContent = function(pageId) {
+    _origUpdatePage?.(pageId);
+    document.querySelectorAll('.drawer-nav-item').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.page === pageId);
+    });
+  };
+
+  /* ══ Boot ══ */
+  document.addEventListener('DOMContentLoaded', function() {
+    initLayout();
+
+    // Inject hamburger into header after layout builds
+    const headerLeft = document.querySelector('.header-left');
+    if (headerLeft) {
+      const ham = document.createElement('button');
+      ham.className = 'hamburger';
+      ham.setAttribute('aria-label', 'القائمة');
+      ham.innerHTML = '<span></span><span></span><span></span>';
+      ham.onclick = openDrawer;
+      headerLeft.prepend(ham);
+    }
+
+    const _orig = window.navigate;
+    window.navigate = async function(pageId, pushState) {
+      await _orig?.(pageId, pushState);
+      if (pageId === 'dashboard') setTimeout(loadDashboard, 60);
+    };
+
+    window.__initRouter?.();
+  });
+  </script>
+</body>
+</html>
