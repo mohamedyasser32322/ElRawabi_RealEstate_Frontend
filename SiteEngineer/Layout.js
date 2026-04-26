@@ -1,26 +1,21 @@
+/* ═══════════════════════════════════════
+   LAYOUT.JS — مهندس الموقع
+   الروابي للعقارات
+   ═══════════════════════════════════════ */
+
 const API_BASE = `http://${window.location.hostname}:5256`;
 
-/* ══════════════════════════════════════
-   1. AUTH CHECK
-══════════════════════════════════════ */
+/* ══ 1. AUTH CHECK ══ */
 function checkAuth() {
-  if (!getToken()) {
-    window.location.replace('/login.html');
-    return false;
-  }
+  if (!getToken()) { window.location.replace('/login.html'); return false; }
   return true;
 }
 
-/* ══════════════════════════════════════
-   2. API WRAPPER
-══════════════════════════════════════ */
+/* ══ 2. API WRAPPER ══ */
 function getToken() {
   let token = localStorage.getItem('token') || localStorage.getItem('authToken');
   if (!token) {
-    try {
-      const d = JSON.parse(localStorage.getItem('authData') || '{}');
-      token = d.token || d.authToken;
-    } catch {}
+    try { const d = JSON.parse(localStorage.getItem('authData') || '{}'); token = d.token || d.authToken; } catch {}
   }
   return token || null;
 }
@@ -28,71 +23,44 @@ function getToken() {
 window.apiFetch = async function(endpoint, options = {}) {
   const token = getToken();
   if (!token) { handleLogout(); return null; }
-  const headers = {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`,
-    ...(options.headers || {})
-  };
+  const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`, ...(options.headers || {}) };
   try {
     const response = await fetch(`${API_BASE}${endpoint}`, { ...options, headers });
     if (response.status === 401) { handleLogout(); return null; }
-    if (response.status === 403) { window.location.replace('/unauth.html'); return null; }
+    if (response.status === 403) { window.location.replace('/login.html'); return null; }
     return response;
-  } catch (err) {
-    console.error('API Connection Error:', err);
-    return null;
-  }
+  } catch (err) { console.error('API Error:', err); return null; }
 };
 
-/* ══════════════════════════════════════
-   3. CONFIG
-══════════════════════════════════════ */
+/* ══ 3. CONFIG ══ */
 const LAYOUT_CONFIG = {
   appName: 'الروابي للعقارات',
+  role: 'مهندس الموقع',
   nav: [
-    { id: 'dashboard',    label: 'لوحة التحكم', icon: 'ri-dashboard-3-line'   },
-    { id: 'projects',     label: 'المشاريع',    icon: 'ri-building-4-line'     },
-    { id: 'reservations', label: 'الحجوزات',    icon: 'ri-calendar-check-line' },
-    { id: 'buyers',       label: 'العملاء',     icon: 'ri-group-line'          },
+    { id: 'dashboard', label: 'لوحة التحكم', icon: 'ri-dashboard-3-line' },
+    { id: 'buildings', label: 'مراحل البناء', icon: 'ri-building-4-line'  },
   ]
 };
 
-/* ══════════════════════════════════════
-   4. HELPERS
-══════════════════════════════════════ */
+/* ══ 4. HELPERS ══ */
 function getUserData() {
-  try { const d = localStorage.getItem('authData'); return d ? JSON.parse(d) : null; }
-  catch { return null; }
+  try { const d = localStorage.getItem('authData'); return d ? JSON.parse(d) : null; } catch { return null; }
 }
 
 function handleLogout() {
-  ['authData', 'token', 'authToken', 'rememberMe', 'savedEmail']
-    .forEach(k => localStorage.removeItem(k));
+  ['authData', 'token', 'authToken', 'rememberMe', 'savedEmail'].forEach(k => localStorage.removeItem(k));
   location.href = '/login.html';
 }
 window.handleLogout = handleLogout;
 
-/* ══════════════════════════════════════
-   5. CSS
-══════════════════════════════════════ */
+/* ══ 5. STYLES ══ */
 function injectStyles() {
-  const styleId = 'layout-bm-styles';
+  const styleId = 'layout-se-styles';
   if (document.getElementById(styleId)) return;
   const css = `
-    .page-content {
-      animation: lyt-slide-in 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-      will-change: transform, opacity;
-    }
-    @keyframes lyt-slide-in {
-      from { opacity: 0; transform: translateY(14px); }
-      to   { opacity: 1; transform: translateY(0);    }
-    }
-    #app-header {
-      display: flex !important;
-      align-items: center !important;
-      justify-content: space-between !important;
-      gap: 12px !important;
-    }
+    .page-content { animation: lyt-slide-in 0.35s cubic-bezier(0.4,0,0.2,1); will-change:transform,opacity; }
+    @keyframes lyt-slide-in { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+    #app-header { display:flex!important; align-items:center!important; justify-content:space-between!important; gap:12px!important; }
     .header-right { display:flex; align-items:center; gap:14px; flex-shrink:0; min-width:0; }
     .header-page-label { display:flex; flex-direction:column; gap:2px; overflow:hidden; }
     .header-page-title {
@@ -101,8 +69,9 @@ function injectStyles() {
     }
     .header-nav { display:flex; align-items:center; gap:4px; flex:1; justify-content:center; }
     .header-left { display:flex; align-items:center; gap:10px; flex-shrink:0; }
+    .header-user { display:flex; align-items:center; gap:8px; }
 
-    /* Hamburger */
+    /* ── Hamburger ── */
     .lyt-hamburger {
       display:none; flex-direction:column; justify-content:center; align-items:center;
       gap:5px; width:38px; height:38px; border-radius:9px;
@@ -119,7 +88,7 @@ function injectStyles() {
     .lyt-hamburger.open span:nth-child(2) { opacity:0; transform:scaleX(0); }
     .lyt-hamburger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
 
-    /* Drawer */
+    /* ── Drawer ── */
     #lyt-overlay {
       display:none; position:fixed; inset:0; background:rgba(0,0,0,0.62);
       z-index:1000; backdrop-filter:blur(4px); opacity:0; transition:opacity 0.28s ease;
@@ -152,13 +121,13 @@ function injectStyles() {
     }
     .lyt-d-avatar {
       width:38px; height:38px; border-radius:50%;
-      background:linear-gradient(135deg,#4e8df5,#2563eb);
+      background:linear-gradient(135deg,#00b4d8,#0077b6);
       display:flex; align-items:center; justify-content:center;
       font-size:0.85rem; font-weight:800; color:#fff;
       border:2px solid rgba(255,255,255,0.14); flex-shrink:0;
     }
     .lyt-d-uname { font-size:0.88rem; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .lyt-d-role  { font-size:0.7rem; color:#ffcc00; margin-top:2px; }
+    .lyt-d-role  { font-size:0.7rem; color:#00b4d8; margin-top:2px; }
     .lyt-d-nav { flex:1; padding:10px; display:flex; flex-direction:column; gap:3px; }
     .lyt-d-item {
       display:flex; align-items:center; gap:12px; padding:11px 13px;
@@ -167,14 +136,9 @@ function injectStyles() {
       transition:all 0.18s ease; background:none;
       font-family:'Tajawal',inherit; width:100%; text-align:right;
     }
-      .header-user {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
     .lyt-d-item i { font-size:1.1rem; flex-shrink:0; width:20px; text-align:center; }
     .lyt-d-item:hover { color:#fff; background:rgba(255,255,255,0.06); border-color:rgba(255,255,255,0.08); }
-    .lyt-d-item.active { color:#4e8df5; background:rgba(78,141,245,0.12); border-color:rgba(78,141,245,0.22); }
+    .lyt-d-item.active { color:#00b4d8; background:rgba(0,180,216,0.12); border-color:rgba(0,180,216,0.22); }
     .lyt-d-foot { padding:12px 10px; border-top:1px solid rgba(255,255,255,0.07); flex-shrink:0; }
     .lyt-d-logout {
       display:flex; align-items:center; gap:10px; padding:11px 13px; border-radius:11px;
@@ -183,9 +147,9 @@ function injectStyles() {
       transition:all 0.18s ease; width:100%;
     }
     .lyt-d-logout:hover { background:rgba(255,59,48,0.18); }
-    .bm-role-badge {
+    .se-role-badge {
       display:inline-flex; align-items:center; gap:5px; font-size:0.72rem; font-weight:700;
-      color:#ffcc00; background:rgba(255,204,0,0.1); border:1px solid rgba(255,204,0,0.28);
+      color:#00b4d8; background:rgba(0,180,216,0.1); border:1px solid rgba(0,180,216,0.28);
       padding:3px 10px; border-radius:20px; white-space:nowrap;
     }
     @media(max-width:1100px) {
@@ -199,20 +163,18 @@ function injectStyles() {
     }
   `;
   const style = document.createElement('style');
-  style.id = styleId;
-  style.textContent = css;
+  style.id = styleId; style.textContent = css;
   document.head.appendChild(style);
 }
 
-/* ══════════════════════════════════════
-   6. DRAWER
-══════════════════════════════════════ */
+/* ══ 6. DRAWER ══ */
 function _buildDrawer() {
   if (document.getElementById('lyt-drawer')) return;
   const overlay = document.createElement('div');
   overlay.id = 'lyt-overlay';
   overlay.onclick = closeDrawer;
   document.body.appendChild(overlay);
+
   const panel = document.createElement('nav');
   panel.id = 'lyt-drawer';
   panel.innerHTML = `
@@ -221,10 +183,10 @@ function _buildDrawer() {
       <button class="lyt-d-close" onclick="closeDrawer()"><i class="ri-close-line"></i></button>
     </div>
     <div class="lyt-d-user">
-      <div class="lyt-d-avatar" id="lyt-d-avatar">؟</div>
+      <div class="lyt-d-avatar" id="lyt-d-avatar">م</div>
       <div style="min-width:0">
         <div class="lyt-d-uname" id="lyt-d-uname">—</div>
-        <div class="lyt-d-role">مدير الحجوزات</div>
+        <div class="lyt-d-role">🔧 ${LAYOUT_CONFIG.role}</div>
       </div>
     </div>
     <div class="lyt-d-nav" id="lyt-d-nav"></div>
@@ -252,10 +214,8 @@ function _fillDrawer(userName, initials) {
   `).join('');
 }
 
-/* ══════════════════════════════════════
-   7. DRAWER ACTIONS
-══════════════════════════════════════ */
-window.openDrawer  = function() {
+/* ══ 7. DRAWER ACTIONS ══ */
+window.openDrawer = function() {
   document.getElementById('lyt-drawer')?.classList.add('open');
   document.getElementById('lyt-overlay')?.classList.add('open');
   document.querySelector('.lyt-hamburger')?.classList.add('open');
@@ -269,30 +229,23 @@ window.closeDrawer = function() {
 };
 window._lytNavDrawer = function(pageId) {
   closeDrawer();
-  window.navigate(pageId);   // يستخدم navigate من router.js
+  window.navigate(pageId);
 };
 
-/* ══════════════════════════════════════
-   8. SYNC NAV (يُستدعى من router.js)
-══════════════════════════════════════ */
+/* ══ 8. SYNC NAV ══ */
 window.__syncNav = function(pageId) {
-  // Header tabs
   document.querySelectorAll('.nav-tab').forEach(tab => {
     tab.classList.toggle('active', tab.dataset.page === pageId);
   });
-  // Drawer items
   document.querySelectorAll('.lyt-d-item').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.page === pageId);
   });
-  // Title
   const info = LAYOUT_CONFIG.nav.find(n => n.id === pageId);
   const titleEl = document.getElementById('header-page-title');
   if (titleEl && info) titleEl.textContent = info.label;
 };
 
-/* ══════════════════════════════════════
-   9. BUILD HEADER
-══════════════════════════════════════ */
+/* ══ 9. INIT LAYOUT ══ */
 function initLayout() {
   if (!checkAuth()) return;
   injectStyles();
@@ -300,7 +253,7 @@ function initLayout() {
 
   const userData = getUserData();
   const userName = userData?.email ? userData.email.split('@')[0] : '—';
-  const initials = userName !== '—' ? userName.slice(0, 2).toUpperCase() : '؟';
+  const initials = userName !== '—' ? userName.slice(0, 2).toUpperCase() : 'م';
 
   _fillDrawer(userName, initials);
 
@@ -318,7 +271,7 @@ function initLayout() {
       <div class="header-divider"></div>
       <div class="header-page-label">
         <div class="header-page-title" id="header-page-title">لوحة التحكم</div>
-        <div class="bm-role-badge"><i class="ri-calendar-check-line"></i>مدير الحجوزات</div>
+        <div class="se-role-badge"><i class="ri-tools-line"></i>${LAYOUT_CONFIG.role}</div>
       </div>
     </div>
     <nav class="header-nav" id="header-nav">${navHTML}</nav>
@@ -338,7 +291,7 @@ function initLayout() {
 
   const header = document.getElementById('app-header');
   if (header) header.innerHTML = headerHTML;
-  document.title = LAYOUT_CONFIG.appName;
+  document.title = `${LAYOUT_CONFIG.appName} — ${LAYOUT_CONFIG.role}`;
 }
 
 window.addEventListener('DOMContentLoaded', initLayout);

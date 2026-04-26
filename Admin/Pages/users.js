@@ -268,7 +268,7 @@
       function translateError(msg) {
         if (!msg) return 'حدث خطأ غير معروف';
         const m = msg.toLowerCase();
-        if (m.includes('email') || m.includes('البريد') || m.includes('duplicate') && m.includes('email'))
+        if (m.includes('email') || m.includes('البريد') || m.includes('بريد') || m.includes('مسجل مسبقاً'))
           return 'البريد الإلكتروني مسجل مسبقاً';
         if (m.includes('phone') || m.includes('هاتف'))
           return 'رقم الهاتف مسجل مسبقاً';
@@ -398,18 +398,20 @@
           let errMsg = `HTTP ${r.status}`;
           try {
             const j = await r.json();
-            // Try to extract a useful message from various server formats
-            errMsg = j.message || j.title || j.detail || j.error || (j.errors ? Object.values(j.errors).flat().join(', ') : null) || errMsg;
+            // استخراج رسالة الخطأ من الباك — بما فيها 409 Conflict
+            errMsg = j.message || j.title || j.detail || j.error
+                  || (j.errors ? Object.values(j.errors).flat().join(', ') : null)
+                  || errMsg;
           } catch {}
           throw new Error(errMsg);
         }
         return r.status === 204 ? null : r.json();
       }
 
-      const GET    = p    => api('GET',    p);
-      const POST   = (p,b)=> api('POST',   p, b);
-      const PUT    = (p,b)=> api('PUT',    p, b);
-      const DELETE = p    => api('DELETE', p);
+      const GET    = p     => api('GET',    p);
+      const POST   = (p,b) => api('POST',   p, b);
+      const PUT    = (p,b) => api('PUT',    p, b);
+      const DELETE = p     => api('DELETE', p);
 
       /* ─── Lookup helpers ─── */
       const getRoleName  = id => ({1:'مدير النظام', 2:'مدير الحجوزات', 3:'مهندس الموقع'}[id] || 'غير معروف');
@@ -532,7 +534,6 @@
         } else {
           openModal('مستخدم جديد', buildForm());
         }
-        // bind status toggle
         setTimeout(()=>{
           updateStatusText();
           document.getElementById('us-active')?.addEventListener('change', updateStatusText);
@@ -557,13 +558,11 @@
         if(!role){ showErr('us-err-role','الدور الوظيفي مطلوب'); ok=false; }
         if(!ok) return;
 
-        // client-side duplicate email check
-        const dupEmail = users.find(u => Number(u.id)!==Number(id) && u.email?.toLowerCase()===em.toLowerCase());
-        if(dupEmail){ showErr('us-err-em','البريد الإلكتروني مسجل لمستخدم آخر'); return; }
+        // ✅ لا يوجد client-side duplicate check هنا — الباك هو المسؤول
 
         const payload = {
-          firstName:fn, lastName:ln, email:em,
-          roleId:parseInt(role),
+          firstName: fn, lastName: ln, email: em,
+          roleId: parseInt(role),
           isActive: document.getElementById('us-active')?.checked ?? true,
         };
         if(!isEdit) payload.password = pw;
@@ -575,12 +574,14 @@
           toast(isEdit?'تم تعديل بيانات المستخدم':'تم إضافة المستخدم بنجاح');
           closeModal(); await loadUsers();
         } catch(e) {
-          const translated = translateError(e.message||'');
-          const m = (e.message||'').toLowerCase();
-          if(m.includes('email') || m.includes('بريد') || m.includes('duplicate') && m.includes('em'))
+          const translated = translateError(e.message || '');
+          const m = (e.message || '').toLowerCase();
+          // الباك بيرجع رسالة "البريد الإلكتروني مسجل مسبقاً" عند 409
+          if (m.includes('بريد') || m.includes('email') || m.includes('مسجل مسبقاً')) {
             showErr('us-err-em', translated);
-          else
+          } else {
             toast(`فشل: ${translated}`, 'error');
+          }
         }
         setBusy('us-submitBtn', false, `<i class="ri-save-line"></i>${isEdit?'حفظ التعديلات':'إضافة المستخدم'}`);
       };

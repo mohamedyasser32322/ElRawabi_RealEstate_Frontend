@@ -7,15 +7,15 @@
   'use strict';
 
   const PAGE_MAP = {
-    'dashboard':    { file: null,                    label: 'لوحة التحكم', roles: ['BookingManager'] },
-    'projects':     { file: 'pages/projects.js',     label: 'المشاريع',    roles: ['BookingManager'] },
-    'reservations': { file: 'pages/reservations.js', label: 'الحجوزات',    roles: ['BookingManager'] },
-    'buyers':       { file: 'pages/buyers.js',       label: 'العملاء',     roles: ['BookingManager'] },
+    'dashboard':    { file: null,                    label: 'لوحة التحكم' },
+    'projects':     { file: 'pages/projects.js',     label: 'المشاريع'    },
+    'reservations': { file: 'pages/reservations.js', label: 'الحجوزات'    },
+    'buyers':       { file: 'pages/buyers.js',       label: 'العملاء'     },
   };
 
-  const loadedModules   = {};
-  let   currentPage     = null;
-  let   activeStyleEl   = null;
+  const loadedModules = {};
+  let   currentPage   = null;
+  let   activeStyleEl = null;
   let   pageAbortController = null;
 
   /* ── load JS module ── */
@@ -46,28 +46,16 @@
     activeStyleEl = style;
   }
 
-  /* ── set page HTML skeleton ── */
-  function setPageHTML(pageId) {
-    const main = document.getElementById('app-main');
-    if (!main) return;
-    main.innerHTML = '';
-
-    if (pageId === 'dashboard') {
-      main.innerHTML = window.__bmDashboardHTML || '<div class="page-header"><h1>لوحة التحكم</h1></div>';
-      return;
+  /* ── get token (unified) ── */
+  function getToken() {
+    let token = localStorage.getItem('token') || localStorage.getItem('authToken');
+    if (!token) {
+      try {
+        const d = JSON.parse(localStorage.getItem('authData') || '{}');
+        token = d.token || d.authToken;
+      } catch {}
     }
-
-    // projects / buyers / reservations inject themselves
-  }
-
-  /* ── sync nav highlights ── */
-  function updateNav(pageId) {
-    document.querySelectorAll('.nav-tab').forEach(tab => {
-      tab.classList.toggle('active', tab.dataset.page === pageId);
-    });
-    const info = PAGE_MAP[pageId];
-    const titleEl = document.getElementById('header-page-title');
-    if (titleEl && info) titleEl.textContent = info.label;
+    return token || null;
   }
 
   /* ══════════════════════════════════════
@@ -77,15 +65,12 @@
     if (pushState === undefined) pushState = true;
 
     // ── Auth guard ──
-    let authData = null;
-    try { authData = JSON.parse(localStorage.getItem('authData')); } catch {}
-
-    if (!authData || !authData.token) {
+    if (!getToken()) {
       window.location.href = '/login.html';
       return;
     }
 
-    // ── Page guard: redirect unknown pages to dashboard ──
+    // ── Page guard ──
     if (!PAGE_MAP[pageId]) {
       window.navigate('dashboard', false);
       return;
@@ -94,9 +79,12 @@
     if (pageId === currentPage) return;
     currentPage = pageId;
 
-    if (pushState) history.pushState({ page: pageId }, '', '#' + pageId);
+    if (pushState) history.pushState({ page: pageId }, '', ' ');
 
-    updateNav(pageId);
+    // ── Sync header + drawer via Layout ──
+    if (typeof window.__syncNav === 'function') {
+      window.__syncNav(pageId);
+    }
 
     const main = document.getElementById('app-main');
     if (main) {
@@ -104,7 +92,7 @@
       main.style.transition = 'opacity 0.15s ease';
     }
 
-    // abort previous page init
+    // abort previous page
     if (pageAbortController) { pageAbortController.abort(); pageAbortController = null; }
     pageAbortController = new AbortController();
     window.__pageAbortSignal = pageAbortController.signal;
@@ -112,16 +100,26 @@
     try {
       await loadPageModule(pageId);
       injectCSS(pageId);
-      setPageHTML(pageId);
 
-      if (main) requestAnimationFrame(() => requestAnimationFrame(() => { main.style.opacity = '1'; }));
+      // ── Clear main ──
+      if (main) main.innerHTML = '';
 
-      // dashboard special handler
-      if (pageId === 'dashboard' && typeof window.__bmLoadDashboard === 'function') {
-        window.__bmLoadDashboard();
+      if (main) requestAnimationFrame(() => requestAnimationFrame(() => {
+        main.style.opacity = '1';
+      }));
+
+      // ── Dashboard ──
+      if (pageId === 'dashboard') {
+        if (main) {
+          main.innerHTML = window.__bmDashboardHTML || '<div class="page-header"><h1>لوحة التحكم</h1></div>';
+        }
+        if (typeof window.__bmLoadDashboard === 'function') {
+          window.__bmLoadDashboard();
+        }
         return;
       }
 
+      // ── Other pages ──
       const page = window.__pages && window.__pages[pageId];
       if (page && typeof page.init === 'function') {
         await page.init();
@@ -151,5 +149,12 @@
   window.__initRouter = function() {
     window.navigate(getPageFromHash() || 'dashboard', false);
   };
+
+  /* ── auto-start if DOMContentLoaded already fired ── */
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    setTimeout(() => window.__initRouter(), 0);
+  } else {
+    document.addEventListener('DOMContentLoaded', () => window.__initRouter());
+  }
 
 })();

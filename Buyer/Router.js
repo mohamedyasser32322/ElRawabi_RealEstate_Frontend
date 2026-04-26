@@ -63,7 +63,7 @@
 
     if (pageId === currentPage) return;
     currentPage = pageId;
-    if (pushState) history.pushState({ page: pageId }, '', '#' + pageId);
+    if (pushState) history.pushState({ page: pageId }, '', ' ');
     updateNav(pageId);
 
     const main = document.getElementById('app-main');

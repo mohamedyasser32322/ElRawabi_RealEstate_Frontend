@@ -62,7 +62,7 @@
     .res-results-count { font-size:0.8rem; color:var(--text-muted); margin-bottom:12px; text-align:left; }
     .res-table-container { background:var(--card-bg); border:1px solid var(--border); border-radius:16px; overflow:hidden; animation:res-fadeUp 0.4s 0.15s ease both; }
     .res-table-scroll { overflow-x:auto; }
-    #res-page table { width:100%; border-collapse:collapse; min-width:700px; }
+    #res-page table { width:100%; border-collapse:collapse; min-width:860px; }
     #res-page thead tr { background:rgba(255,255,255,0.025); border-bottom:1px solid var(--border); }
     #res-page thead th { padding:13px 16px; text-align:right; font-size:0.73rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; }
     #res-page tbody tr { border-bottom:1px solid rgba(255,255,255,0.04); transition:background 0.18s ease; }
@@ -81,6 +81,7 @@
     .res-buyer-name { font-weight:600; font-size:0.87rem; color:var(--light); }
     .res-buyer-empty { color:var(--text-muted); font-size:0.85rem; }
     .res-money { font-weight:700; font-size:0.87rem; color:var(--light); direction:ltr; display:inline-block; }
+    .res-money-warn { font-weight:700; font-size:0.87rem; color:var(--warning); direction:ltr; display:inline-block; }
     .res-type-tag { color:var(--text-muted); font-size:0.85rem; font-weight:600; }
     .res-row-actions { display:flex; gap:5px; align-items:center; justify-content:flex-end; }
     .res-action-btn { position:relative; width:30px; height:30px; border-radius:7px; border:1px solid var(--border); background:transparent; color:var(--text-muted); cursor:pointer; transition:var(--transition); display:flex; align-items:center; justify-content:center; font-size:0.92rem; flex-shrink:0; }
@@ -90,8 +91,6 @@
     .res-action-btn.view:hover { background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.22); color:var(--light); }
     .res-action-btn.edit { border-color:rgba(78,141,245,0.25); color:var(--accent); }
     .res-action-btn.edit:hover { background:rgba(78,141,245,0.18); border-color:var(--accent); box-shadow:0 4px 12px rgba(78,141,245,0.2); }
-    .res-action-btn.del { border-color:rgba(255,59,48,0.2); color:var(--danger); }
-    .res-action-btn.del:hover { background:rgba(255,59,48,0.15); border-color:var(--danger); box-shadow:0 4px 12px rgba(255,59,48,0.18); }
     .res-loader-box { display:flex; align-items:center; justify-content:center; min-height:360px; }
     .res-spinner { width:48px; height:48px; border:4px solid rgba(255,255,255,0.1); border-top-color:var(--accent); border-radius:50%; animation:res-spin 0.8s linear infinite; }
     .res-empty-msg { text-align:center; padding:70px 20px; color:var(--text-muted); font-size:1rem; }
@@ -125,12 +124,6 @@
     .res-btn-primary:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
     .res-btn-secondary { padding:10px 20px; border-radius:10px; background:rgba(255,255,255,0.05); color:var(--light); border:1px solid rgba(255,255,255,0.12); font-family:inherit; font-size:0.88rem; font-weight:600; cursor:pointer; transition:all 0.25s; }
     .res-btn-secondary:hover { background:rgba(255,255,255,0.09); }
-    .res-btn-danger { display:flex; align-items:center; gap:6px; padding:10px 18px; border-radius:10px; background:var(--danger); color:#fff; border:none; font-family:inherit; font-size:0.88rem; font-weight:700; cursor:pointer; transition:var(--transition); }
-    .res-btn-danger:hover { background:#e62c21; transform:translateY(-1px); }
-    .res-confirm-box { text-align:center; padding:8px 0; }
-    .res-confirm-icon { font-size:2.8rem; margin-bottom:14px; }
-    .res-confirm-msg { font-size:0.9rem; color:var(--text-muted); line-height:1.65; margin-bottom:22px; }
-    .res-confirm-actions { display:flex; gap:12px; justify-content:center; }
     #res-toast-container { position:fixed; bottom:22px; right:22px; z-index:2000; display:flex; flex-direction:column; gap:10px; pointer-events:none; }
     .res-toast { display:flex; align-items:center; gap:9px; padding:12px 16px; border-radius:10px; background:rgba(8,24,48,0.97); border:1px solid rgba(255,255,255,0.08); color:var(--light); font-size:0.86rem; font-weight:600; animation:res-slideDown 0.25s ease; box-shadow:0 8px 24px rgba(0,0,0,0.35); pointer-events:all; }
     .res-toast.success { border-color:rgba(52,199,89,0.4); }
@@ -228,6 +221,7 @@
         </div>
       `;
 
+      /* ── Modal close events ── */
       document.getElementById('res-modal').addEventListener('click', e => {
         if (e.target === document.getElementById('res-modal')) closeModal();
       }, { signal: window.__pageAbortSignal });
@@ -235,9 +229,11 @@
         if (e.key === 'Escape') closeModal();
       }, { signal: window.__pageAbortSignal });
 
+      /* ── API Base ── */
       const API_BASE = `http://${window.location.hostname}:5256`;
       const PER_PAGE = 15;
 
+      /* ── State ── */
       const S = {
         page:1, units:[], bookings:[], merged:[], filtered:[],
         filter:'all', projects:[], buildings:[], floors:[], buyers:[],
@@ -245,6 +241,7 @@
       };
       window.S_res = S;
 
+      /* ── Helpers ── */
       function getAuthToken(){
         let token=localStorage.getItem('token')||localStorage.getItem('authToken');
         if(!token){const d=localStorage.getItem('authData');if(d){try{const p=JSON.parse(d);token=p.token||p.authToken;}catch(e){}}}
@@ -326,6 +323,13 @@
 
       const UNIT_STATUS_AR   ={1:'متاح',2:'محجوز',3:'مباع',4:'مقفول'};
       const UNIT_STATUS_BADGE={1:'badge-available',2:'badge-reserved',3:'badge-sold',4:'badge-locked'};
+
+      window.calcRemaining=function(){
+        const price=parseFloat(document.getElementById('f-price')?.value)||0;
+        const paid=parseFloat(v('f-paid'))||0;
+        const ri=document.getElementById('f-remaining');
+        if(ri)ri.value=Math.max(0,price-paid);
+      };
 
       function populateProjectDropdown(){
         const sel=document.getElementById('projectFilter');if(!sel)return;
@@ -428,13 +432,17 @@
               <th>الحالة</th>
               <th>العميل</th>
               <th>السعر الإجمالي</th>
+              <th>المدفوع</th>
+              <th>المتبقي</th>
               <th>تاريخ الحجز</th>
-              <th style="width:100px;text-align:center">إجراء</th>
+              <th style="width:80px;text-align:center">إجراء</th>
             </tr></thead>
             <tbody>${page.map(u=>{
               const stAr =UNIT_STATUS_AR[u.realStatus]||'مجهول';
               const stBdg=UNIT_STATUS_BADGE[u.realStatus]||'badge-locked';
               const hasBuyer=u.buyerName&&u.buyerName!=='—';
+              const paid  =u.booking?.amountPaid;
+              const remain=u.booking?.remainingAmount;
               const bDate =fmtDate(u.booking?.bookingDate||u.booking?.createdAt||u.updatedAt);
               const typeLabel=u.type===3?'روف':'شقة';
               return `<tr>
@@ -451,12 +459,13 @@
                 <td><span class="res-badge ${stBdg}">${stAr}</span></td>
                 <td>${hasBuyer?`<div class="res-buyer-cell"><div class="res-buyer-avatar">${initials(u.buyerName)}</div><span class="res-buyer-name">${u.buyerName}</span></div>`:'<span class="res-buyer-empty">—</span>'}</td>
                 <td><span class="res-money">${fmtMoney(u.price)}</span></td>
+                <td>${paid!=null?`<span class="res-money">${fmtMoney(paid)}</span>`:'<span class="res-buyer-empty">—</span>'}</td>
+                <td>${remain!=null?`<span class="res-money-warn">${fmtMoney(remain)}</span>`:'<span class="res-buyer-empty">—</span>'}</td>
                 <td style="color:var(--text-muted);font-size:0.82rem;white-space:nowrap">${bDate}</td>
                 <td>
                   <div class="res-row-actions">
                     <button class="res-action-btn view" data-tip="تفاصيل" onclick="window.openDetailsModal(${u.id})"><i class="ri-eye-line"></i></button>
                     <button class="res-action-btn edit" data-tip="تعديل" onclick="window.openEditModal(${u.id})"><i class="ri-edit-line"></i></button>
-                    <button class="res-action-btn del"  data-tip="إلغاء الحجز" onclick="window.deleteBooking(${u.booking.id},'${u.unitNumber}')"><i class="ri-delete-bin-line"></i></button>
                   </div>
                 </td>
               </tr>`;
@@ -512,7 +521,11 @@
             </div>
             <div style="background:rgba(78,141,245,0.05);padding:15px;border-radius:12px;border:1px solid rgba(78,141,245,0.15);">
               <h4 style="color:var(--accent);margin-bottom:10px;font-size:0.9rem;">تفاصيل الحجز والعميل</h4>
-              <div><span style="color:var(--text-muted)">العميل:</span> <strong>${u.buyerName}</strong></div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                <div style="grid-column:span 2;"><span style="color:var(--text-muted)">العميل:</span> <strong>${u.buyerName}</strong></div>
+                <div><span style="color:var(--text-muted)">المدفوع:</span> <strong style="color:var(--light)">${fmtMoney(u.booking?.amountPaid)}</strong></div>
+                <div><span style="color:var(--text-muted)">المتبقي:</span> <strong style="color:var(--warning)">${fmtMoney(u.booking?.remainingAmount)}</strong></div>
+              </div>
             </div>
           </div>
           <div class="res-modal-footer"><button class="res-btn-secondary" onclick="window.closeModal()">إغلاق</button></div>
@@ -521,28 +534,36 @@
 
       window.openEditModal=async function(unitId){
         const unit=S.merged.find(u=>Number(u.id)===Number(unitId));if(!unit)return;
+        const booking=unit.booking;
         const statusOpts=[{val:2,label:'محجوز'},{val:3,label:'مباع'}]
           .map(o=>`<option value="${o.val}" ${unit.realStatus===o.val?'selected':''}>${o.label}</option>`).join('');
         openModal(`تعديل بيانات: وحدة ${unit.unitNumber}`,`
           <div class="res-modal-body">
             <div class="res-form-section unit-sec">
-              <div class="res-section-label">تحديث الوحدة</div>
+              <div class="res-section-label">تحديث الوحدة والماليات</div>
               <div class="res-form-row">
                 <div class="res-form-group"><label class="res-form-label">حالة الوحدة</label><select id="f-edit-status" class="res-form-select">${statusOpts}</select></div>
-                <div class="res-form-group"><label class="res-form-label">إجمالي السعر (ر.س)</label><input id="f-price" class="res-form-input" type="number" step="1000" min="0" value="${unit.price||0}"></div>
+                <div class="res-form-group"><label class="res-form-label">إجمالي السعر (ر.س)</label><input id="f-price" class="res-form-input" type="number" step="1000" min="0" value="${unit.price||0}" oninput="window.calcRemaining()"></div>
+              </div>
+              <div class="res-form-row">
+                <div class="res-form-group"><label class="res-form-label">المبلغ المدفوع</label><input id="f-paid" class="res-form-input" type="number" step="0.01" min="0" value="${booking?.amountPaid||0}" oninput="window.calcRemaining()"></div>
+                <div class="res-form-group"><label class="res-form-label">المبلغ المتبقي</label><input id="f-remaining" class="res-form-input" type="number" step="0.01" min="0" value="${booking?.remainingAmount||0}" readonly style="background:rgba(0,0,0,0.2);cursor:not-allowed;"></div>
               </div>
             </div>
           </div>
           <div class="res-modal-footer">
-            <button class="res-btn-primary" id="submitBtn" onclick="window.submitEditUnit(${unit.id},${unit.booking?.id||'null'})"><i class="ri-save-line"></i> حفظ التعديلات</button>
+            <button class="res-btn-primary" id="submitBtn" onclick="window.submitEditUnit(${unit.id},${booking?.id||'null'})"><i class="ri-save-line"></i> حفظ التعديلات</button>
             <button class="res-btn-secondary" onclick="window.closeModal()">إلغاء</button>
           </div>
         `);
+        setTimeout(()=>window.calcRemaining(),50);
       };
 
       window.submitEditUnit=async function(id,existingBookingId){
         const status =Number(v('f-edit-status'));
         const price  =parseFloat(v('f-price'))||0;
+        const bPaid  =parseFloat(v('f-paid'))||0;
+        const bRemain=parseFloat(v('f-remaining'))||0;
         setBusy('submitBtn',true,'حفظ التعديلات');
         try{
           const unitOld=S.units.find(u=>Number(u.id)===Number(id));
@@ -550,7 +571,7 @@
           if(existingBookingId){
             const bStatus=status===3?2:1;
             const oldBooking=S.bookings.find(b=>b.id===existingBookingId);
-            await PUT(`/api/Bookings/${existingBookingId}`,{...oldBooking,status:bStatus,amountPaid:0,remainingAmount:0});
+            await PUT(`/api/Bookings/${existingBookingId}`,{...oldBooking,status:bStatus,amountPaid:bPaid,remainingAmount:bRemain});
           }
           toast('تم حفظ التعديلات بنجاح');closeModal();await loadAll();
         }catch(e){console.error('submitEditUnit:',e);toast('فشل حفظ التعديلات','error');}
@@ -570,13 +591,18 @@
                 <div class="res-form-group"><label class="res-form-label">المشروع *</label><select id="f-book-project" class="res-form-select" onchange="window.onBookProjectChange()">${projectOpts}</select></div>
                 <div class="res-form-group"><label class="res-form-label">المبنى *</label><select id="f-book-building" class="res-form-select" onchange="window.onBookBuildingChange()" disabled><option value="">— اختر المشروع أولاً —</option></select></div>
               </div>
-              <div class="res-form-group"><label class="res-form-label">الوحدة (المتاحة فقط) *</label><select id="f-unit" class="res-form-select" disabled><option value="">— اختر المبنى أولاً —</option></select></div>
+              <div class="res-form-group"><label class="res-form-label">الوحدة (المتاحة فقط) *</label><select id="f-unit" class="res-form-select" onchange="window.updateAddBookingPrice()" disabled><option value="">— اختر المبنى أولاً —</option></select></div>
             </div>
             <div class="res-form-section book-sec">
               <div class="res-section-label">تفاصيل الإجراء</div>
               <div class="res-form-row">
                 <div class="res-form-group"><label class="res-form-label">المشتري *</label><select id="f-buyer" class="res-form-select">${buyerOpts}</select></div>
                 <div class="res-form-group"><label class="res-form-label">نوع الإجراء *</label><select id="f-action-type" class="res-form-select"><option value="reserved" selected>حجز (مبدئي)</option><option value="sold">بيع (نهائي)</option></select></div>
+              </div>
+              <input id="f-price" type="hidden" value="0">
+              <div class="res-form-row">
+                <div class="res-form-group"><label class="res-form-label">المبلغ المدفوع (المقدم)</label><input id="f-paid" class="res-form-input" type="number" step="0.01" min="0" value="0" oninput="window.calcRemaining()"></div>
+                <div class="res-form-group"><label class="res-form-label">المبلغ المتبقي</label><input id="f-remaining" class="res-form-input" type="number" step="0.01" min="0" value="0" readonly style="background:rgba(0,0,0,0.2);cursor:not-allowed;"></div>
               </div>
             </div>
           </div>
@@ -592,6 +618,7 @@
         const bldSel=document.getElementById('f-book-building');
         const unitSel=document.getElementById('f-unit');
         unitSel.innerHTML='<option value="">— اختر المبنى أولاً —</option>';unitSel.disabled=true;
+        document.getElementById('f-price').value=0;window.calcRemaining();
         if(!projId){bldSel.innerHTML='<option value="">— اختر المشروع أولاً —</option>';bldSel.disabled=true;return;}
         const buildings=S.buildings.filter(b=>!b.isDeleted&&String(b.projectId)===String(projId));
         if(!buildings.length){bldSel.innerHTML='<option value="">— لا توجد مباني —</option>';bldSel.disabled=true;return;}
@@ -602,20 +629,30 @@
       window.onBookBuildingChange=function(){
         const bldId=document.getElementById('f-book-building').value;
         const unitSel=document.getElementById('f-unit');
+        document.getElementById('f-price').value=0;window.calcRemaining();
         if(!bldId){unitSel.innerHTML='<option value="">— اختر المبنى أولاً —</option>';unitSel.disabled=true;return;}
         const allUnits=S.units.filter(u=>{
           const floor=S.floors.find(f=>f.id===u.floorId);
           return floor&&String(floor.buildingId)===String(bldId)&&toStatus(u.status)===1;
         });
         if(!allUnits.length){unitSel.innerHTML='<option value="">— لا توجد وحدات متاحة —</option>';unitSel.disabled=true;return;}
-        unitSel.innerHTML='<option value="">— اختر الوحدة —</option>'+allUnits.map(u=>`<option value="${u.id}" data-floor="${u.floorId}">وحدة ${u.unitNumber} (${u.type===3?'روف':'شقة عادية'})</option>`).join('');
+        unitSel.innerHTML='<option value="">— اختر الوحدة —</option>'+allUnits.map(u=>`<option value="${u.id}" data-price="${u.price||0}" data-floor="${u.floorId}">وحدة ${u.unitNumber} (${u.type===3?'روف':'شقة عادية'})</option>`).join('');
         unitSel.disabled=false;
       };
 
+      window.updateAddBookingPrice=function(){
+        const sel=document.getElementById('f-unit');if(!sel||!sel.value)return;
+        document.getElementById('f-price').value=sel.options[sel.selectedIndex].getAttribute('data-price');
+        window.calcRemaining();
+      };
+
+      // ✅ FIX: التحقق من وجود booking نشط وحذفه قبل إنشاء الجديد (يحل مشكلة soft-delete + duplicate key)
       window.submitAddBooking=async function(){
         const sel=document.getElementById('f-unit');
         const unitId=Number(sel.value);
         const buyerId=Number(v('f-buyer'));
+        const paid=parseFloat(v('f-paid'))||0;
+        const remaining=parseFloat(v('f-remaining'))||0;
         const actionType=v('f-action-type');
         if(!unitId||!buyerId){toast('اختر الوحدة والمشتري','error');return;}
         const floorId=sel.options[sel.selectedIndex].getAttribute('data-floor');
@@ -623,6 +660,7 @@
         const targetBookingStatus=actionType==='sold'?2:1;
         setBusy('submitBtn',true,'تأكيد العملية');
         try{
+          // ✅ FIX: تحقق من وجود booking نشط على نفس الوحدة وأحذفه أولاً
           const existingActiveBooking=S.bookings.find(b=>
             Number(b.unitId)===unitId&&
             !b.isDeleted&&
@@ -634,38 +672,17 @@
           }
           const unitOld=S.units.find(u=>Number(u.id)===unitId);
           await PUT(`/api/Units/${unitId}`,{...unitOld,status:targetUnitStatus,floorId:Number(floorId),buyerId});
-          await POST('/api/Bookings',{unitId,buyerId,amountPaid:0,remainingAmount:0,status:targetBookingStatus});
+          await POST('/api/Bookings',{unitId,buyerId,amountPaid:paid,remainingAmount:remaining,status:targetBookingStatus});
           toast(actionType==='sold'?'تم بيع الوحدة بنجاح':'تم حجز الوحدة بنجاح');
           closeModal();await loadAll();
         }catch(e){console.error('submitAddBooking:',e);toast(translateError(e.message)||'فشل العملية','error');}
         setBusy('submitBtn',false,'تأكيد العملية');
       };
 
-      window.deleteBooking=function(bookingId,unitNum){
-        openModal('إلغاء الحجز',`
-          <div class="res-modal-body"><div class="res-confirm-box">
-            <div class="res-confirm-icon">🗑️</div>
-            <p class="res-confirm-msg">هل أنت متأكد من إلغاء الحجز للوحدة <strong>${unitNum}</strong>؟<br>هذا سيعيد الوحدة كـ "متاحة" للبيع.</p>
-            <div class="res-confirm-actions">
-              <button class="res-btn-danger" id="submitBtn" onclick="window.confirmDeleteBooking(${bookingId})"><i class="ri-delete-bin-line"></i> نعم، إلغاء الحجز</button>
-              <button class="res-btn-secondary" onclick="window.closeModal()">تراجع</button>
-            </div>
-          </div></div>
-        `);
-      };
-
-      window.confirmDeleteBooking=async function(bookingId){
-        const btn=document.getElementById('submitBtn');
-        if(btn){btn.disabled=true;btn.innerHTML='<i class="ri-loader-4-line"></i> جاري...';}
-        try{await DELETE(`/api/Bookings/${bookingId}`);toast('تم الإلغاء وتحرير الوحدة بنجاح');closeModal();await loadAll();}
-        catch(e){console.error('confirmDeleteBooking:',e);toast('فشل الإلغاء','error');}
-        if(btn){btn.disabled=false;btn.innerHTML='<i class="ri-delete-bin-line"></i> نعم، إلغاء الحجز';}
-      };
-
       window.exportCSV=function(){
         if(!S.filtered.length){toast('لا توجد بيانات للتصدير','error');return;}
-        const headers=['المشروع','المبنى','الدور','رقم الوحدة','النوع','المساحة','السعر','الحالة','المشتري','تاريخ الحجز'];
-        const rows=S.filtered.map(u=>[u.projectName||'',u.buildingName||'',u.floorNumber||'',u.unitNumber||'',u.type===3?'روف':'شقة عادية',u.area??'',u.price||0,UNIT_STATUS_AR[u.realStatus]||'',u.buyerName!=='—'?u.buyerName:'',fmtDate(u.booking?.bookingDate||u.booking?.createdAt)]);
+        const headers=['المشروع','المبنى','الدور','رقم الوحدة','النوع','المساحة','السعر','الحالة','المشتري','المدفوع','المتبقي','تاريخ الحجز'];
+        const rows=S.filtered.map(u=>[u.projectName||'',u.buildingName||'',u.floorNumber||'',u.unitNumber||'',u.type===3?'روف':'شقة عادية',u.area??'',u.price||0,UNIT_STATUS_AR[u.realStatus]||'',u.buyerName!=='—'?u.buyerName:'',u.booking?.amountPaid||0,u.booking?.remainingAmount||0,fmtDate(u.booking?.bookingDate||u.booking?.createdAt)]);
         const csv='\uFEFF'+[headers,...rows].map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
         const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download=`الحجوزات_${new Date().toISOString().split('T')[0]}.csv`;a.click();
         toast('تم تصدير الملف بنجاح');

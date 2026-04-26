@@ -16,7 +16,8 @@
       --success: #34c759;
       --warning: #ffcc00;
       --danger: #ff3b30;
-      --gray: #8e8e93;
+      --closed: #6b7a8d;
+      --accent: #4e8df5;
       --modal-overlay: rgba(0, 0, 0, 0.85);
       --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     }
@@ -36,397 +37,349 @@
 
     @keyframes spin     { to { transform: rotate(360deg); } }
     @keyframes fadeUp   { from { opacity:0; transform:translateY(22px); } to { opacity:1; transform:translateY(0); } }
-    @keyframes fadeDown { from { opacity:0; transform:translateY(-14px); } to { opacity:1; transform:translateY(0); } }
     @keyframes fadeIn   { from { opacity:0; } to { opacity:1; } }
     @keyframes scaleIn  { from { opacity:0; transform:scale(.94); } to { opacity:1; transform:scale(1); } }
     @keyframes slideDown { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
 
     /* ── HEADER ── */
     header {
-      position: sticky;
-      top: 0;
-      z-index: 1000;
+      position: sticky; top: 0; z-index: 1000;
       background: rgba(13,33,66,0.97);
       backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
       border-bottom: 1px solid rgba(255,255,255,0.08);
-      transition: var(--transition);
     }
-
     nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
       padding: 12px 40px;
     }
-
     .nav-logo {
       font-size: 1.5rem; font-weight: 800; color: var(--light);
-      cursor: pointer;
-      transition: var(--transition);
+      cursor: pointer; transition: var(--transition);
     }
     .nav-logo:hover { opacity: 0.75; transform: scale(1.02); }
-
-    .nav-right { display: flex; align-items: center; gap: 15px; }
     .login-btn {
       background: transparent; color: var(--light);
       border: 1px solid rgba(255,255,255,0.5);
       padding: 8px 22px; border-radius: 10px;
-      text-decoration: none; font-weight: 600; white-space: nowrap;
+      text-decoration: none; font-weight: 600;
       transition: var(--transition);
     }
-    .login-btn:hover { background: var(--light); color: var(--primary); transform: translateY(-2px); border-color: var(--light); }
+    .login-btn:hover { background: var(--light); color: var(--primary); transform: translateY(-2px); }
 
-    .header-titles {
-      padding: 14px 40px 0;
-      text-align: center;
-      overflow: hidden;
-    }
-    .header-titles h1 {
-      font-size: 1.8rem; font-weight: 800; color: var(--light);
-      margin-bottom: 4px;
-      transition: var(--transition);
-    }
-    .header-titles p {
-      color: var(--text-muted); font-size: 1rem;
-      transition: var(--transition);
-    }
+    .header-titles { padding: 14px 40px 0; text-align: center; }
+    .header-titles h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 4px; transition: var(--transition); }
+    .header-titles p  { color: var(--text-muted); font-size: 1rem; transition: var(--transition); }
 
-    .search-container {
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      padding: 14px 40px;
-    }
-    .search-wrapper {
-      width: 100%; max-width: 600px;
-      position: relative; display: flex; align-items: center;
-    }
+    .search-container { display: flex; align-items: center; justify-content: center; padding: 14px 40px; }
+    .search-wrapper { width: 100%; max-width: 600px; position: relative; }
     .search-input {
-      width: 100%;
-      background: rgba(255,255,255,0.07);
+      width: 100%; background: rgba(255,255,255,0.07);
       border: 1px solid rgba(255,255,255,0.12);
-      padding: 10px 40px 10px 15px;
-      border-radius: 12px; color: var(--light);
-      font-family: inherit; font-size: 0.9rem;
+      padding: 10px 40px 10px 15px; border-radius: 12px;
+      color: var(--light); font-family: inherit; font-size: 0.9rem;
       transition: var(--transition);
     }
     .search-input::placeholder { color: var(--text-muted); }
-    .search-input:focus {
-      outline: none;
-      background: rgba(255,255,255,0.11);
-      border-color: rgba(255,255,255,0.32);
-      box-shadow: 0 0 0 3px rgba(255,255,255,0.06);
-    }
-    .search-icon { position: absolute; left: 12px; opacity: 0.45; pointer-events: none; font-size: 0.95rem; }
+    .search-input:focus { outline: none; background: rgba(255,255,255,0.11); border-color: rgba(255,255,255,0.32); box-shadow: 0 0 0 3px rgba(255,255,255,0.06); }
+    .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); opacity: 0.45; pointer-events: none; }
 
     .breadcrumb {
-      padding: 9px 40px 10px;
-      display: flex; gap: 10px; font-size: 0.82rem;
-      align-items: center;
+      padding: 9px 40px 10px; display: flex; gap: 10px;
+      font-size: 0.82rem; align-items: center;
       border-top: 1px solid rgba(255,255,255,0.05);
-      animation: slideDown 0.4s cubic-bezier(0.4,0,0.2,1);
     }
-    .breadcrumb span {
-      cursor: pointer; opacity: 0.6;
-      transition: var(--transition);
-    }
+    .breadcrumb span { cursor: pointer; opacity: 0.6; transition: var(--transition); }
     .breadcrumb span:hover { opacity: 1; }
     .breadcrumb .sep { color: var(--text-muted); cursor: default; opacity: 0.35; }
     .breadcrumb .current { color: var(--light); font-weight: 700; cursor: default; opacity: 1; }
 
+    /* ── FILTER BAR ── */
     .filter-container {
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      padding: 0 40px;
-      max-height: 0; overflow: hidden;
-      transition: max-height 0.45s cubic-bezier(0.4,0,0.2,1),
-                  padding 0.35s cubic-bezier(0.4,0,0.2,1),
-                  opacity 0.35s ease;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 0 40px; max-height: 0; overflow: hidden;
+      transition: max-height 0.45s cubic-bezier(0.4,0,0.2,1), padding 0.35s, opacity 0.35s;
       opacity: 0;
     }
-    .filter-container.active {
-      max-height: 80px;
-      padding: 12px 40px;
-      opacity: 1;
-      animation: slideDown 0.4s cubic-bezier(0.4,0,0.2,1);
-    }
+    .filter-container.active { max-height: 120px; padding: 12px 40px; opacity: 1; }
+    .filter-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; align-items: center; }
+    .filter-group { display: flex; align-items: center; gap: 8px; }
+    .filter-label { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; white-space: nowrap; }
+
     .filter-buttons { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
     .filter-btn {
-      background: rgba(255,255,255,0.06);
-      color: var(--light);
+      background: rgba(255,255,255,0.06); color: var(--light);
       border: 1px solid rgba(255,255,255,0.12);
       padding: 8px 20px; border-radius: 20px;
       cursor: pointer; font-family: inherit; font-weight: 600; font-size: 0.88rem;
       transition: var(--transition);
     }
     .filter-btn:hover { background: rgba(255,255,255,0.12); transform: translateY(-1px); }
-    .filter-btn.active       { background: rgba(255,255,255,0.16); border-color: rgba(255,255,255,0.5); }
-    .filter-btn.active.avail { background: rgba(52,199,89,0.18); color: var(--success); border-color: var(--success); }
-    .filter-btn.active.resrv { background: rgba(255,204,0,0.15); color: var(--warning); border-color: var(--warning); }
-    .filter-btn.active.sold  { background: rgba(255,59,48,0.18); color: var(--danger); border-color: var(--danger); }
+    .filter-btn.active        { background: rgba(255,255,255,0.16); border-color: rgba(255,255,255,0.5); }
+    .filter-btn.active.avail  { background: rgba(52,199,89,0.18); color: var(--success); border-color: var(--success); }
+    .filter-btn.active.resrv  { background: rgba(255,204,0,0.15); color: var(--warning); border-color: var(--warning); }
+    .filter-btn.active.sold   { background: rgba(255,59,48,0.18); color: var(--danger); border-color: var(--danger); }
+
+    /* ── ROOMS CUSTOM DROPDOWN ── */
+    .custom-dropdown { position: relative; display: inline-block; }
+    .custom-dropdown-btn {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.06); color: var(--light);
+      border: 1px solid rgba(255,255,255,0.14);
+      padding: 9px 16px 9px 14px; border-radius: 20px;
+      cursor: pointer; font-family: inherit; font-weight: 600; font-size: 0.88rem;
+      transition: var(--transition); white-space: nowrap; min-width: 130px;
+      justify-content: space-between;
+    }
+    .custom-dropdown-btn:hover { background: rgba(255,255,255,0.11); border-color: rgba(255,255,255,0.3); }
+    .custom-dropdown.open .custom-dropdown-btn { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.4); }
+    .dropdown-arrow { width: 14px; height: 14px; transition: transform 0.3s; opacity: 0.7; flex-shrink: 0; }
+    .custom-dropdown.open .dropdown-arrow { transform: rotate(180deg); opacity: 1; }
+    .custom-dropdown-menu {
+      position: fixed; min-width: 100%;
+      background: linear-gradient(145deg, #0e2448 0%, #112952 100%);
+      border: 1px solid rgba(255,255,255,0.15); border-radius: 14px; overflow: hidden;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.55);
+      opacity: 0; transform: translateY(-8px) scale(0.97); pointer-events: none;
+      transition: opacity 0.25s, transform 0.25s; z-index: 1100;
+    }
+    .custom-dropdown.open .custom-dropdown-menu { opacity: 1; transform: translateY(0) scale(1); pointer-events: all; }
+    .dropdown-option {
+      padding: 11px 18px; font-family: inherit; font-size: 0.9rem; font-weight: 600;
+      color: rgba(255,255,255,0.75); cursor: pointer;
+      transition: background 0.2s, color 0.2s, padding 0.2s;
+      border-bottom: 1px solid rgba(255,255,255,0.04); text-align: right;
+    }
+    .dropdown-option:last-child { border-bottom: none; }
+    .dropdown-option:hover { background: rgba(255,255,255,0.08); color: var(--light); padding-right: 22px; }
+    .dropdown-option.selected { background: rgba(255,255,255,0.1); color: var(--light); }
+
+    /* ── FACING SELECT ── */
+    .facing-select-wrap { display: flex; align-items: center; gap: 8px; }
+    .facing-select {
+      background: rgba(255,255,255,0.06); color: var(--light);
+      border: 1px solid rgba(255,255,255,0.14);
+      padding: 9px 14px 9px 32px; border-radius: 20px;
+      cursor: pointer; font-family: inherit; font-weight: 600; font-size: 0.88rem;
+      outline: none; appearance: none; -webkit-appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat; background-position: left 8px center; background-size: 13px;
+      min-width: 148px; color-scheme: dark; transition: var(--transition);
+    }
+    .facing-select option { background: #0D2142; color: #fff; }
+    .facing-select:hover { background-color: rgba(255,255,255,0.11); border-color: rgba(255,255,255,0.3); }
+    .facing-select:focus { border-color: rgba(255,255,255,0.45); box-shadow: 0 0 0 3px rgba(255,255,255,0.07); }
 
     /* ── CONTAINER ── */
     .container { max-width: 1200px; margin: 0 auto; padding: 30px 30px 80px; }
-
-    #mainView {
-      transition: opacity 0.4s cubic-bezier(0.4,0,0.2,1), transform 0.4s cubic-bezier(0.4,0,0.2,1);
-      will-change: opacity, transform;
-    }
+    #mainView { transition: opacity 0.4s cubic-bezier(0.4,0,0.2,1), transform 0.4s cubic-bezier(0.4,0,0.2,1); }
     #mainView.out { opacity: 0; transform: translateY(15px); }
     #mainView.in  { opacity: 1; transform: translateY(0); }
 
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px,1fr)); gap: 26px; }
 
     .card {
-      background: var(--card-bg);
-      border-radius: 20px;
+      background: var(--card-bg); border-radius: 20px;
       border: 1px solid rgba(255,255,255,0.08);
-      padding: 28px; cursor: pointer;
-      opacity: 0;
+      padding: 28px; cursor: pointer; opacity: 0;
       animation: fadeUp 0.48s cubic-bezier(0.4,0,0.2,1) forwards;
       transition: var(--transition);
-      will-change: transform;
     }
-    .card:hover {
-      transform: translateY(-10px) scale(1.025);
-      border-color: rgba(255,255,255,0.35);
-      box-shadow: 0 22px 48px rgba(0,0,0,0.5);
-      background: rgba(255,255,255,0.04);
-    }
-    .card h3 { font-size: 1.4rem; margin-bottom: 10px; color: var(--light); }
+    .card:hover { transform: translateY(-10px) scale(1.025); border-color: rgba(255,255,255,0.35); box-shadow: 0 22px 48px rgba(0,0,0,0.5); }
+    .card h3 { font-size: 1.4rem; margin-bottom: 10px; }
     .card .meta { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 16px; display: flex; align-items: center; gap: 5px; }
     .card .desc { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 16px; line-height: 1.55; }
-    .card .stats {
-      display: flex; justify-content: space-between;
-      border-top: 1px solid rgba(255,255,255,0.06); padding-top: 16px; gap: 4px;
-    }
+    .card .stats { display: flex; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 16px; gap: 4px; }
     .stat-box { text-align: center; flex: 1; }
-    .stat-number { font-weight: 800; font-size: 1.1rem; margin-bottom: 2px; transition: var(--transition); }
-    .card:hover .stat-number { transform: scale(1.06); }
+    .stat-number { font-weight: 800; font-size: 1.1rem; margin-bottom: 2px; }
     .stat-label  { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.5px; }
-    .stat-total    .stat-number { color: var(--light); }
-    .stat-total    .stat-label  { color: var(--text-muted); }
-    .stat-available .stat-number { color: var(--success); }
-    .stat-available .stat-label  { color: var(--success); }
-    .stat-reserved  .stat-number { color: var(--warning); }
-    .stat-reserved  .stat-label  { color: var(--warning); }
-    .stat-sold      .stat-number { color: var(--danger); }
-    .stat-sold      .stat-label  { color: var(--danger); }
+    .stat-total    .stat-number { color: var(--light); }    .stat-total    .stat-label { color: var(--text-muted); }
+    .stat-available .stat-number { color: var(--success); } .stat-available .stat-label { color: var(--success); }
+    .stat-reserved  .stat-number { color: var(--warning); } .stat-reserved  .stat-label { color: var(--warning); }
+    .stat-sold      .stat-number { color: var(--danger); }  .stat-sold      .stat-label { color: var(--danger); }
 
-    .building-map { display: flex; flex-direction: column-reverse; gap: 18px; }
-
+    /* ── FLOOR MAP ── */
+    .building-map { display: flex; flex-direction: column; gap: 16px; }
     .floor-row {
-      background: rgba(255,255,255,0.02);
-      border-radius: 15px; padding: 22px;
-      display: flex; align-items: center; gap: 22px;
-      border: 1px solid rgba(255,255,255,0.05);
-      opacity: 0;
-      animation: fadeUp 0.45s cubic-bezier(0.4,0,0.2,1) forwards;
-      transition: var(--transition);
+      background: rgba(255,255,255,0.02); border-radius: 15px;
+      border: 1px solid rgba(255,255,255,0.05); overflow: hidden;
+      opacity: 0; animation: fadeUp 0.45s cubic-bezier(0.4,0,0.2,1) forwards;
     }
-    .floor-row:hover { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.1); }
-
-    .floor-label {
-      min-width: 110px; font-weight: 800; color: var(--light); font-size: 1.15rem;
-      border-left: 3px solid rgba(255,255,255,0.28); padding-left: 16px;
+    .floor-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 18px; background: rgba(255,255,255,0.025);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
     }
-    .units-list { display: flex; flex-wrap: wrap; gap: 13px; flex: 1; }
+    .floor-label { font-weight: 800; color: var(--light); font-size: 0.95rem; display: flex; align-items: center; gap: 8px; }
+    .floor-label::before { content: ''; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+    .floor-count { font-size: 0.73rem; color: var(--text-muted); background: rgba(255,255,255,0.05); padding: 3px 10px; border-radius: 20px; }
+    .units-list { display: flex; flex-wrap: wrap; gap: 9px; padding: 14px 18px; direction: rtl; justify-content: flex-start; }
 
+    /* ── UNIT BOX — new top/bottom design ── */
     .unit-box {
-      width: 110px; min-height: 106px; border-radius: 12px;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      padding: 11px; text-align: center; cursor: pointer;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.03);
+      flex: 0 0 auto; width: 120px;
+      border-radius: 11px; cursor: pointer;
+      border: 1.5px solid rgba(255,255,255,0.1);
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .unit-box-top { padding: 10px 11px 8px 13px; flex: 1; display: flex; flex-direction: column; }
+    .unit-box-bottom {
+      display: flex; align-items: center; gap: 5px;
+      padding: 5px 11px 6px 13px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+    .u-num-row { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 5px; }
+    .u-num { font-weight: 800; font-size: 1rem; color: var(--light); line-height: 1.1; }
+    .u-type-badge {
+      display: inline-block; font-size: .6rem; padding: 2px 6px;
+      border-radius: 20px; font-weight: 700; white-space: nowrap; line-height: 1.4;
+    }
+    .u-type-apt  { background: rgba(78,141,245,.15); color: rgba(120,170,255,.9); border: 1px solid rgba(78,141,245,.3); }
+    .u-type-roof { background: rgba(155,89,182,.2);  color: #c39bd3;              border: 1px solid rgba(155,89,182,.35); }
+    .u-divider   { height: 1px; background: rgba(255,255,255,0.06); margin: 5px 0; }
+    .u-info-row  { display: flex; align-items: center; gap: 4px; font-size: .7rem; color: var(--text-muted); margin-bottom: 2px; }
+    .u-facing-row{ display: flex; align-items: center; gap: 4px; font-size: .68rem; color: var(--text-muted); margin-bottom: 2px; }
+    .u-price-row { font-size: .68rem; color: var(--light); font-weight: 600; margin-top: 3px; }
+    .u-status-dot  { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .u-status-text { font-size: .72rem; font-weight: 700; flex: 1; }
+
+    /* Status colors */
+    .unit-box.st-available .unit-box-top { background: rgba(52,199,89,.07); }
+    .unit-box.st-available { border-color: rgba(52,199,89,.3); }
+    .unit-box.st-available:hover { border-color: var(--success); transform: scale(1.06); box-shadow: 0 10px 24px rgba(52,199,89,.18); }
+    .unit-box.st-available .u-status-dot { background: var(--success); box-shadow: 0 0 6px var(--success); }
+    .unit-box.st-available .u-status-text { color: rgba(52,199,89,.9); }
+
+    .unit-box.st-reserved .unit-box-top { background: rgba(255,204,0,.07); }
+    .unit-box.st-reserved { border-color: rgba(255,204,0,.3); }
+    .unit-box.st-reserved:hover { border-color: var(--warning); transform: scale(1.06); box-shadow: 0 10px 24px rgba(255,204,0,.15); }
+    .unit-box.st-reserved .u-status-dot { background: var(--warning); box-shadow: 0 0 6px var(--warning); }
+    .unit-box.st-reserved .u-status-text { color: rgba(255,204,0,.9); }
+
+    .unit-box.st-sold .unit-box-top { background: rgba(255,59,48,.07); }
+    .unit-box.st-sold { border-color: rgba(255,59,48,.3); }
+    .unit-box.st-sold:hover { border-color: var(--danger); transform: scale(1.06); box-shadow: 0 10px 24px rgba(255,59,48,.17); }
+    .unit-box.st-sold .u-status-dot { background: var(--danger); box-shadow: 0 0 6px var(--danger); }
+    .unit-box.st-sold .u-status-text { color: rgba(255,59,48,.9); }
+
+    .floor-legend { display: flex; gap: 14px; flex-wrap: wrap; padding: 8px 18px; border-top: 1px solid rgba(255,255,255,0.04); background: rgba(255,255,255,0.01); }
+    .legend-item  { display: flex; align-items: center; gap: 5px; font-size: .72rem; color: var(--text-muted); }
+    .legend-dot   { width: 7px; height: 7px; border-radius: 50%; }
+
+    .floor-add-btn {
+      flex: 0 0 auto; min-width: 70px; padding: 10px 8px; border-radius: 11px;
+      background: rgba(78,141,245,.06); border: 1.5px dashed rgba(78,141,245,.35);
+      color: rgba(78,141,245,.65); font-family: inherit; font-size: .8rem; font-weight: 700;
+      cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
       transition: var(--transition);
-      will-change: transform;
     }
-    .unit-box:hover {
-      transform: translateY(-5px) scale(1.09);
-      background: rgba(255,255,255,0.14);
-      border-color: white;
-      box-shadow: 0 12px 32px rgba(0,0,0,0.4);
-    }
-    .unit-num { font-weight: 800; font-size: 1rem; margin-bottom: 4px; }
-    .unit-info { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 3px; }
-    .price { font-size: 0.75rem; color: var(--light); font-weight: 600; }
+    .floor-add-btn:hover { background: rgba(78,141,245,.14); border-color: var(--accent); color: var(--accent); }
 
-    .status-available { background: rgba(52,199,89,0.1); color: #34c759; border-color: rgba(52,199,89,0.3); }
-    .status-reserved  { background: rgba(255,204,0,0.1); color: #ffcc00; border-color: rgba(255,204,0,0.3); }
-    .status-sold      { background: rgba(255,59,48,0.1); color: #ff3b30; border-color: rgba(255,59,48,0.3); }
-
+    /* search result single unit card */
     .single-unit-display {
-      background: var(--card-bg);
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,0.08);
-      padding: 24px;
-      opacity: 0;
+      background: var(--card-bg); border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.08); padding: 24px; opacity: 0;
       animation: fadeUp 0.48s cubic-bezier(0.4,0,0.2,1) forwards;
       transition: var(--transition);
     }
-    .single-unit-display:hover {
-      transform: translateY(-8px);
-      border-color: rgba(255,255,255,0.25);
-      box-shadow: 0 16px 40px rgba(0,0,0,0.4);
-    }
-    .single-unit-header {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 18px; padding-bottom: 14px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-    }
-    .single-unit-header h2 { font-size: 1.2rem; color: var(--light); }
-    .single-unit-info {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 16px; margin-bottom: 18px;
-    }
-    .info-block {
-      background: rgba(255,255,255,0.02);
-      padding: 12px; border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.05);
-    }
-    .info-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; }
-    .info-value { font-size: 0.95rem; color: var(--light); font-weight: 600; }
+    .single-unit-display:hover { transform: translateY(-8px); border-color: rgba(255,255,255,0.25); box-shadow: 0 16px 40px rgba(0,0,0,0.4); }
+    .single-unit-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .single-unit-header h2 { font-size: 1.2rem; }
+    .single-unit-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 16px; margin-bottom: 18px; }
+    .info-block { background: rgba(255,255,255,0.02); padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); }
+    .info-label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; }
+    .info-value { font-size: 0.95rem; font-weight: 600; }
     .detail-btn { text-align: center; }
     .detail-btn button {
       background: rgba(52,199,89,0.15); color: var(--success);
       border: 1px solid var(--success); padding: 10px 28px;
       border-radius: 20px; cursor: pointer; font-family: inherit;
-      font-weight: 600; font-size: 0.9rem;
-      transition: var(--transition);
+      font-weight: 600; font-size: 0.9rem; transition: var(--transition);
     }
     .detail-btn button:hover { background: rgba(52,199,89,0.25); transform: translateY(-2px); }
 
-    .pagination {
-      display: flex; justify-content: center; gap: 8px;
-      margin-top: 40px; flex-wrap: wrap;
-    }
+    /* pagination */
+    .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 40px; flex-wrap: wrap; }
     .page-btn {
-      background: rgba(255,255,255,0.06);
-      color: var(--light);
-      border: 1px solid rgba(255,255,255,0.12);
-      padding: 8px 14px; border-radius: 8px;
-      cursor: pointer; font-family: inherit; font-weight: 600;
-      font-size: 0.85rem;
+      background: rgba(255,255,255,0.06); color: var(--light);
+      border: 1px solid rgba(255,255,255,0.12); padding: 8px 14px; border-radius: 8px;
+      cursor: pointer; font-family: inherit; font-weight: 600; font-size: 0.85rem;
       transition: var(--transition);
     }
     .page-btn:hover:not(:disabled) { background: rgba(255,255,255,0.12); transform: translateY(-2px); }
-    .page-btn.active { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.4); }
+    .page-btn.active   { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.4); }
     .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
     .loader-container { display: flex; justify-content: center; align-items: center; padding: 100px 20px; }
-    .spinner {
-      width: 50px; height: 50px;
-      border: 4px solid rgba(255,255,255,0.1);
-      border-top-color: var(--light);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
+    .spinner { width: 50px; height: 50px; border: 4px solid rgba(255,255,255,0.1); border-top-color: var(--light); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    .empty-msg { text-align: center; padding: 60px 20px; color: var(--text-muted); font-size: 1rem; }
 
-    .empty-msg {
-      text-align: center; padding: 60px 20px;
-      color: var(--text-muted); font-size: 1rem;
-    }
-
+    /* ── MODAL ── */
     .modal {
-      display: none; position: fixed; top: 0; left: 0;
-      width: 100%; height: 100%;
+      display: none; position: fixed; inset: 0;
       background: var(--modal-overlay);
-      justify-content: center; align-items: center;
-      z-index: 2000;
+      justify-content: center; align-items: center; z-index: 2000;
       backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      animation: fadeIn 0.3s ease;
     }
-    .modal.active { display: flex; }
+    .modal.active { display: flex; animation: fadeIn 0.3s ease; }
     .modal-content {
-      background: linear-gradient(135deg, var(--card-bg) 0%, rgba(17, 41, 82, 0.8) 100%);
-      border-radius: 24px;
-      border: 1px solid rgba(255,255,255,0.15);
-      width: 90%; max-width: 550px;
-      max-height: 85vh;
-      overflow-y: auto;
+      background: linear-gradient(135deg, var(--card-bg) 0%, rgba(17,41,82,0.8) 100%);
+      border-radius: 24px; border: 1px solid rgba(255,255,255,0.15);
+      width: 90%; max-width: 500px; max-height: 85vh; overflow-y: auto;
       animation: scaleIn 0.35s cubic-bezier(0.4,0,0.2,1);
-      position: relative;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+      position: relative; box-shadow: 0 25px 50px rgba(0,0,0,0.6);
     }
     .modal-close {
       position: absolute; top: 18px; left: 18px;
-      font-size: 1.8rem; color: var(--light);
-      cursor: pointer; opacity: 0.6;
-      transition: var(--transition);
-      z-index: 10;
-      width: 36px; height: 36px;
-      display: flex; align-items: center; justify-content: center;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.05);
+      font-size: 1.8rem; color: var(--light); cursor: pointer; opacity: 0.6;
+      width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+      border-radius: 50%; background: rgba(255,255,255,0.05);
+      transition: var(--transition); z-index: 10;
     }
-    .modal-close:hover { 
-      opacity: 1; 
-      background: rgba(255,59,48,0.2);
-      transform: rotate(90deg);
-    }
+    .modal-close:hover { opacity: 1; background: rgba(255,59,48,0.2); transform: rotate(90deg); }
     .modal-header {
-      padding: 32px 32px 20px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      background: rgba(0,0,0,0.2);
-      border-radius: 24px 24px 0 0;
+      padding: 32px 32px 20px; border-bottom: 1px solid rgba(255,255,255,0.08);
+      background: rgba(0,0,0,0.2); border-radius: 24px 24px 0 0;
     }
-    .modal-header h2 { 
-      font-size: 1.5rem; 
-      margin-bottom: 12px; 
-      color: var(--light);
-      font-weight: 800;
-    }
-    .unit-status { display: flex; gap: 10px; }
+    .modal-header h2 { font-size: 1.5rem; margin-bottom: 12px; font-weight: 800; }
+    .unit-status { display: flex; gap: 10px; flex-wrap: wrap; }
     .modal-body { padding: 28px 32px; }
     .detail-item {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
-      opacity: 0;
-      animation: fadeUp 0.4s cubic-bezier(0.4,0,0.2,1) forwards;
+      padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+      opacity: 0; animation: fadeUp 0.4s cubic-bezier(0.4,0,0.2,1) forwards;
       transition: var(--transition);
     }
-    .detail-item:hover {
-      background: rgba(255,255,255,0.02);
-      padding: 16px 12px;
-      border-radius: 8px;
-    }
+    .detail-item:hover { background: rgba(255,255,255,0.02); padding: 14px 12px; border-radius: 8px; }
     .detail-item:last-child { border-bottom: none; }
-    .detail-label {
-      color: var(--text-muted); font-size: 0.95rem; font-weight: 600;
-      min-width: 120px;
-    }
-    .detail-value {
-      color: var(--light); font-size: 1.05rem; font-weight: 700;
-      text-align: left;
-    }
+    .detail-label { color: var(--text-muted); font-size: 0.95rem; font-weight: 600; min-width: 120px; }
+    .detail-value { color: var(--light); font-size: 1.05rem; font-weight: 700; text-align: left; }
+
     .status-badge {
-      display: inline-block; padding: 8px 18px;
-      border-radius: 20px; font-size: 0.9rem;
-      font-weight: 700; border: 1.5px solid;
-      transition: var(--transition);
+      display: inline-block; padding: 6px 16px; border-radius: 20px;
+      font-size: 0.88rem; font-weight: 700; border: 1.5px solid;
     }
     .status-badge.available { background: rgba(52,199,89,0.15); color: var(--success); border-color: var(--success); }
-    .status-badge.reserved  { background: rgba(255,204,0,0.15); color: var(--warning); border-color: var(--warning); }
-    .status-badge.sold      { background: rgba(255,59,48,0.15); color: var(--danger); border-color: var(--danger); }
+    .status-badge.reserved  { background: rgba(255,204,0,0.15);  color: var(--warning); border-color: var(--warning); }
+    .status-badge.sold      { background: rgba(255,59,48,0.15);  color: var(--danger);  border-color: var(--danger); }
+
+    .facing-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;
+      background: rgba(78,141,245,0.1); color: rgba(120,170,255,0.9);
+      border: 1px solid rgba(78,141,245,0.25);
+    }
 
     @media (max-width: 768px) {
-      nav { padding: 12px 20px; flex-wrap: wrap; }
-      .header-titles { padding: 12px 20px; }
-      .header-titles h1 { font-size: 1.4rem; }
-      .search-container { padding: 10px 20px; }
+      nav { padding: 12px 20px; }
+      .header-titles, .search-container, .breadcrumb { padding-left: 20px; padding-right: 20px; }
       .filter-container { padding: 0 20px; }
-      .filter-container.active { padding: 10px 20px; }
-      .breadcrumb { padding: 8px 20px; font-size: 0.75rem; }
+      .filter-container.active { padding: 10px 20px; max-height: 160px; }
       .container { padding: 20px 20px 60px; }
       .grid { grid-template-columns: 1fr; gap: 18px; }
-      .floor-row { flex-direction: column; align-items: flex-start; gap: 16px; }
-      .floor-label { border-left: none; border-bottom: 2px solid rgba(255,255,255,0.2); padding-left: 0; padding-bottom: 10px; margin-bottom: 12px; }
-      .units-list { width: 100%; }
-      .modal-content { width: 95%; max-width: 95vw; }
-      .modal-header { padding: 24px 20px 16px; }
-      .modal-body { padding: 20px; }
-      .single-unit-info { grid-template-columns: 1fr; }
+      .modal-content { width: 95%; }
+      .modal-header, .modal-body { padding: 20px; }
+      .unit-box { width: 100px; }
     }
   </style>
 </head>
@@ -457,11 +410,39 @@
     </div>
 
     <div class="filter-container" id="filterContainer">
-      <div class="filter-buttons">
-        <button class="filter-btn active" onclick="setUnitFilter('all', this)">الكل</button>
-        <button class="filter-btn" onclick="setUnitFilter('available', this)">متاح</button>
-        <button class="filter-btn" onclick="setUnitFilter('reserved', this)">محجوز</button>
-        <button class="filter-btn" onclick="setUnitFilter('sold', this)">مباع</button>
+      <div class="filter-row">
+        <div class="filter-group">
+          <span class="filter-label">الحالة:</span>
+          <div class="filter-buttons" id="statusFilterBtns">
+            <button class="filter-btn active" onclick="setUnitFilter('all',this)">الكل</button>
+            <button class="filter-btn" onclick="setUnitFilter('available',this)">متاح</button>
+            <button class="filter-btn" onclick="setUnitFilter('reserved',this)">محجوز</button>
+            <button class="filter-btn" onclick="setUnitFilter('sold',this)">مباع</button>
+          </div>
+        </div>
+
+        <div class="filter-group" id="roomsFilterGroup" style="display:none;">
+          <span class="filter-label">الغرف:</span>
+          <div class="custom-dropdown" id="roomsDropdown">
+            <button class="custom-dropdown-btn" id="roomsDropdownBtn" onclick="toggleRoomsDropdown(event)">
+              <span id="roomsDropdownLabel">كل الغرف</span>
+              <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="custom-dropdown-menu" id="roomsDropdownMenu">
+              <div class="dropdown-option selected" data-value="0" onclick="selectRoomsOption(0,'كل الغرف',this)">كل الغرف</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="facing-select-wrap" id="facingFilterGroup" style="display:none;">
+          <span class="filter-label">الواجهة:</span>
+          <select class="facing-select" id="facingSelect" onchange="setFacingFilter(Number(this.value))">
+            <option value="0">كل الواجهات</option>
+            <option value="1">أمامي على شارع</option>
+            <option value="2">أمامي على شارعين</option>
+            <option value="3">خلفي</option>
+          </select>
+        </div>
       </div>
     </div>
   </header>
@@ -483,17 +464,15 @@
   </div>
 
 <script>
-  const API_BASE = `http://${window.location.hostname}:5256`
+  const API_BASE = `http://${window.location.hostname}:5256`;
   const ITEMS_PER_PAGE = 9;
 
+  const FACING_AR = {0:'غير محدد',1:'أمامي على شارع',2:'أمامي على شارعين',3:'خلفي'};
 
   let state = {
-    view: 'projects',
-    data: [],
-    filteredData: [],
-    currentPage: 1,
-    params: {},
-    unitFilter: 'all',
+    view: 'projects', data: [], filteredData: [],
+    currentPage: 1, params: {},
+    unitFilter: 'all', roomsFilter: 0, facingFilter: 0,
     _transitioning: false
   };
 
@@ -506,13 +485,12 @@
     if (state._transitioning) return;
     state._transitioning = true;
     const v = document.getElementById('mainView');
-    v.style.transition = 'opacity 0.4s cubic-bezier(0.4,0,0.2,1), transform 0.4s cubic-bezier(0.4,0,0.2,1)';
     v.classList.add('out');
-    await sleep(400);
+    await sleep(380);
     renderFn();
     v.classList.remove('out');
     v.classList.add('in');
-    await sleep(400);
+    await sleep(380);
     v.classList.remove('in');
     state._transitioning = false;
   }
@@ -520,25 +498,21 @@
   function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
   function updateHeader(title, subtitle) {
-    const t = document.getElementById('mainTitle');
-    const s = document.getElementById('subTitle');
-    t.style.transition = s.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+    const t = document.getElementById('mainTitle'), s = document.getElementById('subTitle');
     t.style.opacity = s.style.opacity = '0';
     t.style.transform = s.style.transform = 'translateY(-8px)';
     setTimeout(() => {
-      t.innerText = title;
-      s.innerText = subtitle;
-      t.style.transform = s.style.transform = 'translateY(6px)';
+      t.innerText = title; s.innerText = subtitle;
       t.style.opacity = s.style.opacity = '1';
       t.style.transform = s.style.transform = 'translateY(0)';
+      t.style.transition = s.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
     }, 300);
   }
 
   function updateSearchPlaceholder(ph) {
     const el = document.getElementById('searchInput');
-    el.style.transition = 'opacity 0.2s ease';
     el.style.opacity = '0';
-    setTimeout(() => { el.placeholder = ph; el.value = ''; el.style.opacity = '1'; }, 200);
+    setTimeout(() => { el.placeholder = ph; el.value = ''; el.style.opacity = '1'; el.style.transition = 'opacity 0.2s'; }, 200);
   }
 
   async function apiFetch(endpoint) {
@@ -552,49 +526,49 @@
     } catch(e) { console.error(e); return null; }
   }
 
-  function arr(v) {
-    return Array.isArray(v) ? v : (v?.data || v?.items || []);
-  }
-
+  function arr(v) { return Array.isArray(v) ? v : (v?.data || v?.items || []); }
   function esc(s) { return (s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
 
-  function translateUnitType(type) {
-    return UNIT_TYPES[type] || type;
+  function toFacing(val) {
+    if (!val || val === 0) return 0;
+    if (typeof val === 'number') return val;
+    return {'frontonstreet':1,'frontonestreet':1,'FrontOneStreet':1,'fronttwostreets':2,'FrontTwoStreets':2,'back':3,'Back':3}[val] ?? 0;
   }
 
-  // ───── SEARCH ─────
+  // ── SEARCH ──
   let _searchTimer = null;
-  function handleSearch() {
-    clearTimeout(_searchTimer);
-    _searchTimer = setTimeout(_doSearch, 160);
-  }
+  function handleSearch() { clearTimeout(_searchTimer); _searchTimer = setTimeout(_doSearch, 160); }
 
   function _doSearch() {
     const q = document.getElementById('searchInput').value.toLowerCase().trim();
     if (state.view === 'projects') {
-      state.filteredData = state.data.filter(p =>
-        (p.name||'').toLowerCase().includes(q) || (p.location||'').toLowerCase().includes(q));
+      state.filteredData = state.data.filter(p => (p.name||'').toLowerCase().includes(q) || (p.location||'').toLowerCase().includes(q));
     } else if (state.view === 'buildings') {
       state.filteredData = state.data.filter(b => (b.name||'').toLowerCase().includes(q));
     } else if (state.view === 'units') {
-      state.filteredData = state.data.filter(f => {
-        const fu = (state.params.units||[]).filter(u => {
-          if (Number(u.floorId) !== Number(f.id)) return false;
-          const matchFilter = state.unitFilter === 'all' || (u.status||'').toLowerCase() === state.unitFilter;
-          const matchSearch = !q || (u.unitNumber||'').toString().toLowerCase().includes(q);
-          return matchFilter && matchSearch;
-        });
-        return fu.length > 0;
-      });
+      state.filteredData = state.data.filter(f => getFloorUnits(f, state.params.units||[], q).length > 0);
     }
     state.currentPage = 1;
     swapContent(renderCurrentView);
   }
 
-  // ───── UNIT FILTER ─────
+  function getFloorUnits(floor, allUnits, searchQ) {
+    return allUnits.filter(u => {
+      if (Number(u.floorId) !== Number(floor.id)) return false;
+      const st = (u.status||'').toLowerCase();
+      if (st === 'closed') return false;
+      const matchFilter  = state.unitFilter  === 'all' || st === state.unitFilter;
+      const matchRooms   = state.roomsFilter  === 0    || Number(u.rooms) === state.roomsFilter;
+      const matchFacing  = state.facingFilter === 0    || toFacing(u.facing) === state.facingFilter;
+      const matchSearch  = !searchQ || (u.unitNumber||'').toString().toLowerCase().includes(searchQ);
+      return matchFilter && matchRooms && matchFacing && matchSearch;
+    });
+  }
+
+  // ── FILTERS ──
   function setUnitFilter(filter, btn) {
     state.unitFilter = filter;
-    document.querySelectorAll('.filter-btn').forEach(b => b.className = 'filter-btn');
+    document.querySelectorAll('#statusFilterBtns .filter-btn').forEach(b => b.className = 'filter-btn');
     btn.classList.add('active');
     if (filter === 'available') btn.classList.add('avail');
     if (filter === 'reserved')  btn.classList.add('resrv');
@@ -602,10 +576,64 @@
     _doSearch();
   }
 
-  // ───── PAGINATION ─────
+  function setFacingFilter(val) {
+    state.facingFilter = Number(val);
+    _doSearch();
+  }
+
+  function buildRoomsDropdown(allUnits) {
+    const roomSet = [...new Set(
+      allUnits.filter(u => (u.status||'').toLowerCase() !== 'closed')
+              .map(u => Number(u.rooms)).filter(r => r > 0)
+    )].sort((a,b) => a-b);
+
+    const menu = document.getElementById('roomsDropdownMenu');
+    const grp  = document.getElementById('roomsFilterGroup');
+    if (!menu || !grp) return;
+
+    const allLabel = 'كل الغرف';
+    const roomLabel = r => r + ' غرف';
+    menu.innerHTML = `<div class="dropdown-option selected" data-value="0" onclick="selectRoomsOption(0,'${allLabel}',this)">${allLabel}</div>` +
+      roomSet.map(r => `<div class="dropdown-option" data-value="${r}" onclick="selectRoomsOption(${r},'${roomLabel(r)}',this)">${roomLabel(r)}</div>`).join('');
+
+    menu.querySelectorAll('.dropdown-option').forEach(opt =>
+      opt.classList.toggle('selected', Number(opt.dataset.value) === state.roomsFilter));
+    const lbl = document.getElementById('roomsDropdownLabel');
+    if (lbl) lbl.textContent = state.roomsFilter === 0 ? allLabel : roomLabel(state.roomsFilter);
+    grp.style.display = roomSet.length > 0 ? 'flex' : 'none';
+  }
+
+  function toggleRoomsDropdown(e) {
+    e.stopPropagation();
+    const dd = document.getElementById('roomsDropdown');
+    const btn = document.getElementById('roomsDropdownBtn');
+    const menu = document.getElementById('roomsDropdownMenu');
+    const rect = btn.getBoundingClientRect();
+    menu.style.top = (rect.bottom + 8) + 'px';
+    menu.style.left = rect.left + 'px';
+    menu.style.right = 'auto';
+    menu.style.minWidth = rect.width + 'px';
+    dd.classList.toggle('open');
+  }
+
+  function selectRoomsOption(val, label, el) {
+    state.roomsFilter = Number(val);
+    document.getElementById('roomsDropdownLabel').textContent = label;
+    document.querySelectorAll('#roomsDropdownMenu .dropdown-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('roomsDropdown').classList.remove('open');
+    _doSearch();
+  }
+
+  document.addEventListener('click', e => {
+    const dd = document.getElementById('roomsDropdown');
+    if (dd && !dd.contains(e.target)) dd.classList.remove('open');
+  });
+
+  // ── PAGINATION ──
   function renderPagination(total) {
     const pages = Math.ceil(total / ITEMS_PER_PAGE);
-    const div   = document.getElementById('pagination');
+    const div = document.getElementById('pagination');
     if (pages <= 1) { div.innerHTML = ''; return; }
     let h = `<button class="page-btn" onclick="goToPage(${state.currentPage-1})" ${state.currentPage===1?'disabled':''}>السابق</button>`;
     for (let i=1; i<=pages; i++)
@@ -618,167 +646,164 @@
     if (state._transitioning) return;
     state.currentPage = page;
     swapContent(renderCurrentView);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({top:0, behavior:'smooth'});
   }
 
-  // ───── STATUS MAPS ─────
-  const ST_AR   = { Available:'متاح', Reserved:'محجوز', Sold:'مباع', Closed:'مغلق' };
-  const ST_CSS  = { Available:'status-available', Reserved:'status-reserved', Sold:'status-sold', Closed:'status-sold' };
-  const ST_BADGE = { Available:'available', Reserved:'reserved', Sold:'sold', Closed:'sold' };
+  // ── STATUS MAPS ──
+  const ST_AR    = {Available:'متاح', Reserved:'محجوز', Sold:'مباع'};
+  const ST_CSS   = {Available:'st-available', Reserved:'st-reserved', Sold:'st-sold'};
+  const ST_BADGE = {Available:'available', Reserved:'reserved', Sold:'sold'};
 
-  // ───── RENDER ─────
+  // ── RENDER ──
   function renderCurrentView() {
     const start    = (state.currentPage - 1) * ITEMS_PER_PAGE;
     const pageData = state.filteredData.slice(start, start + ITEMS_PER_PAGE);
     const c        = document.getElementById('mainView');
     const q        = document.getElementById('searchInput').value.toLowerCase().trim();
 
-    /* ─ PROJECTS ─ */
+    /* PROJECTS */
     if (state.view === 'projects') {
-      if (!pageData.length) { c.innerHTML = '<div class="empty-msg">لا توجد مشاريع مطابقة للبحث</div>'; renderPagination(0); return; }
+      if (!pageData.length) {
+      const q = document.getElementById('searchInput').value.trim();
+      const msg = q.length > 0 ? 'لا توجد مشاريع مطابقة' : 'لا يوجد مشاريع حالياً';
+      c.innerHTML = `<div class="empty-msg">${msg}</div>`;
+      renderPagination(0);
+      return;
+    }
       let h = '<div class="grid">';
       pageData.forEach((p, i) => {
-        h += `
-          <div class="card" style="animation-delay:${i*55}ms"
-               onclick="showBuildings(${p.id},'${esc(p.name)}')">
-            <h3>${p.name}</h3>
-            <div class="meta">📍 ${p.location}</div>
-            <p class="desc">${p.description
-              ? (p.description.length > 90 ? p.description.slice(0,90)+'…' : p.description)
-              : 'مشروع عقاري متميز في موقع استراتيجي'}</p>
-            <div class="stats">
-              <div class="stat-box stat-total">
-                <div class="stat-number">${p.totalUnits??0}</div>
-                <div class="stat-label">وحدات</div>
-              </div>
-              <div class="stat-box stat-available">
-                <div class="stat-number">${p.availableUnits??0}</div>
-                <div class="stat-label">متاح</div>
-              </div>
-              <div class="stat-box stat-reserved">
-                <div class="stat-number">${p.reservedUnits??0}</div>
-                <div class="stat-label">محجوز</div>
-              </div>
-              <div class="stat-box stat-sold">
-                <div class="stat-number">${p.soldUnits??0}</div>
-                <div class="stat-label">مباع</div>
-              </div>
-            </div>
-          </div>`;
+        h += `<div class="card" style="animation-delay:${i*55}ms" onclick="showBuildings(${p.id},'${esc(p.name)}')">
+          <h3>${p.name}</h3>
+          <div class="meta">📍 ${p.location}</div>
+          <p class="desc">${p.description ? (p.description.length>90?p.description.slice(0,90)+'…':p.description) : 'مشروع عقاري متميز في موقع استراتيجي'}</p>
+          <div class="stats">
+            <div class="stat-box stat-total"><div class="stat-number">${p.totalUnits??0}</div><div class="stat-label">وحدات</div></div>
+            <div class="stat-box stat-available"><div class="stat-number">${p.availableUnits??0}</div><div class="stat-label">متاح</div></div>
+            <div class="stat-box stat-reserved"><div class="stat-number">${p.reservedUnits??0}</div><div class="stat-label">محجوز</div></div>
+            <div class="stat-box stat-sold"><div class="stat-number">${p.soldUnits??0}</div><div class="stat-label">مباع</div></div>
+          </div>
+        </div>`;
       });
       h += '</div>';
       c.innerHTML = h;
       renderPagination(state.filteredData.length);
 
-    /* ─ BUILDINGS ─ */
+    /* BUILDINGS */
     } else if (state.view === 'buildings') {
       if (!pageData.length) { c.innerHTML = '<div class="empty-msg">لا توجد مبانٍ مطابقة</div>'; renderPagination(0); return; }
       let h = '<div class="grid">';
       pageData.forEach((b, i) => {
-        h += `
-          <div class="card" style="animation-delay:${i*55}ms"
-               onclick="showUnits(${b.id},'${esc(b.name)}',${state.params.projectId},'${esc(state.params.projectName)}')">
-            <h3>${b.name}</h3>
-            <div class="meta">🏗️ نسبة الإنجاز: ${b.progress??0}%</div>
-            <div class="stats">
-              <div class="stat-box stat-total">
-                <div class="stat-number">${b.totalUnits??0}</div>
-                <div class="stat-label">وحدات</div>
-              </div>
-              <div class="stat-box stat-available">
-                <div class="stat-number">${b.availableUnits??0}</div>
-                <div class="stat-label">متاح</div>
-              </div>
-              <div class="stat-box stat-reserved">
-                <div class="stat-number">${b.reservedUnits??0}</div>
-                <div class="stat-label">محجوز</div>
-              </div>
-              <div class="stat-box stat-sold">
-                <div class="stat-number">${b.soldUnits??0}</div>
-                <div class="stat-label">مباع</div>
-              </div>
-            </div>
-          </div>`;
+        h += `<div class="card" style="animation-delay:${i*55}ms" onclick="showUnits(${b.id},'${esc(b.name)}',${state.params.projectId},'${esc(state.params.projectName)}')">
+          <h3>${b.name}</h3>
+          <div class="stats">
+            <div class="stat-box stat-total"><div class="stat-number">${b.totalUnits??0}</div><div class="stat-label">وحدات</div></div>
+            <div class="stat-box stat-available"><div class="stat-number">${b.availableUnits??0}</div><div class="stat-label">متاح</div></div>
+            <div class="stat-box stat-reserved"><div class="stat-number">${b.reservedUnits??0}</div><div class="stat-label">محجوز</div></div>
+            <div class="stat-box stat-sold"><div class="stat-number">${b.soldUnits??0}</div><div class="stat-label">مباع</div></div>
+          </div>
+        </div>`;
       });
       h += '</div>';
       c.innerHTML = h;
       renderPagination(state.filteredData.length);
 
-    /* ─ UNITS ─ */
+    /* UNITS */
     } else if (state.view === 'units') {
       const allUnits = state.params.units || [];
       const isSearching = q.length > 0;
 
       if (isSearching) {
-        /* search result: flat list */
         let matched = [];
-        state.filteredData.forEach(f => {
-          const fu = allUnits.filter(u => {
-            if (Number(u.floorId) !== Number(f.id)) return false;
-            const mf = state.unitFilter === 'all' || (u.status||'').toLowerCase() === state.unitFilter;
-            return mf && (u.unitNumber||'').toString().toLowerCase().includes(q);
-          });
-          matched = matched.concat(fu);
-        });
-
+        state.filteredData.forEach(f => { matched = matched.concat(getFloorUnits(f, allUnits, q)); });
         if (!matched.length) { c.innerHTML = '<div class="empty-msg">لا توجد وحدات مطابقة</div>'; renderPagination(0); return; }
-
         const paginated = matched.slice(start, start + ITEMS_PER_PAGE);
         let h = '';
         paginated.forEach((u, i) => {
-          const bc   = ST_BADGE[u.status] || 'available';
-          const stAr = ST_AR[u.status]    || u.status;
+          const bc    = ST_BADGE[u.status] || 'available';
+          const stAr  = ST_AR[u.status]   || u.status;
           const price = u.price ? Number(u.price).toLocaleString('ar-SA') : '—';
-          h += `
-            <div class="single-unit-display" style="animation-delay:${i*70}ms">
-              <div class="single-unit-header">
-                <h2>وحدة ${u.unitNumber}</h2>
-                <span class="status-badge ${bc}">${stAr}</span>
-              </div>
-              <div class="single-unit-info">
-                <div class="info-block"><div class="info-label">المساحة</div><div class="info-value">${u.area??'—'} م²</div></div>
-                <div class="info-block"><div class="info-label">الغرف</div><div class="info-value">${u.rooms??'—'}</div></div>
-                <div class="info-block"><div class="info-label">السعر</div><div class="info-value">${price}</div></div>
-              </div>
-              <div class="detail-btn">
-                <button onclick='openModal(${JSON.stringify(u)})'>عرض التفاصيل الكاملة</button>
-              </div>
-            </div>`;
+          const facingAr = FACING_AR[toFacing(u.facing)] || '—';
+          h += `<div class="single-unit-display" style="animation-delay:${i*70}ms">
+            <div class="single-unit-header">
+              <h2>وحدة ${u.unitNumber}</h2>
+              <span class="status-badge ${bc}">${stAr}</span>
+            </div>
+            <div class="single-unit-info">
+              <div class="info-block"><div class="info-label">المساحة</div><div class="info-value">${u.area??'—'} م²</div></div>
+              <div class="info-block"><div class="info-label">الغرف</div><div class="info-value">${u.rooms||'—'}</div></div>
+              <div class="info-block"><div class="info-label">السعر</div><div class="info-value">${price}</div></div>
+              <div class="info-block"><div class="info-label">الواجهة</div><div class="info-value">${facingAr}</div></div>
+            </div>
+            <div class="detail-btn"><button onclick='openModal(${JSON.stringify(u)})'>عرض التفاصيل الكاملة</button></div>
+          </div>`;
         });
         c.innerHTML = h;
         renderPagination(matched.length);
 
       } else {
-        /* floor map */
-        if (!pageData.length) { c.innerHTML = '<div class="empty-msg">لا توجد طوابق</div>'; renderPagination(0); return; }
+        if (!pageData.length) { c.innerHTML = '<div class="empty-msg">لا توجد طوابق أو وحدات مطابقة</div>'; renderPagination(0); return; }
+        const sortedFloors = [...pageData].sort((a,b) => (a.floorNumber??0) - (b.floorNumber??0));
         let h = '<div class="building-map">';
         let visibleFloors = 0;
-        pageData.forEach((f, fi) => {
-          const fu = allUnits.filter(u => {
-            // ✅ FIX: استخدام Number() لضمان مقارنة صحيحة بين string و number
-            if (Number(u.floorId) !== Number(f.id)) return false;
-            return state.unitFilter === 'all' || (u.status||'').toLowerCase() === state.unitFilter;
-          });
-          if (!fu.length && state.unitFilter !== 'all') return;
+        sortedFloors.forEach((f, fi) => {
+          const fu = getFloorUnits(f, allUnits, '');
+          if (!fu.length) return;
           visibleFloors++;
           const floorName = f.floorNumber != null ? `الدور ${f.floorNumber}` : (f.name || `طابق ${fi+1}`);
+          const avail  = fu.filter(u => (u.status||'').toLowerCase() === 'available').length;
+          const resrv  = fu.filter(u => (u.status||'').toLowerCase() === 'reserved').length;
+          const sold   = fu.filter(u => (u.status||'').toLowerCase() === 'sold').length;
+
           h += `<div class="floor-row" style="animation-delay:${visibleFloors*60}ms">
-            <div class="floor-label">${floorName}</div>
+            <div class="floor-header">
+              <div class="floor-label">${floorName}</div>
+              <span class="floor-count">${fu.length} وحدة</span>
+            </div>
             <div class="units-list">`;
+
           fu.forEach(u => {
-            const css   = ST_CSS[u.status]  || 'status-available';
-            const area  = u.area  ? `${u.area}م` : '—';
-            const rooms = u.rooms ? `${u.rooms} غرف` : '';
-            const price = u.price ? Number(u.price).toLocaleString('ar-SA') : '—';
-            h += `
-              <div class="unit-box ${css}" onclick='openModal(${JSON.stringify(u)})'>
-                <div class="unit-num">${u.unitNumber}</div>
-                <div class="unit-info">${area}${rooms?' | '+rooms:''}</div>
-                <div class="price">${price}</div>
-              </div>`;
+            const css    = ST_CSS[u.status]  || 'st-available';
+            const stAr   = ST_AR[u.status]   || '—';
+            const rooms  = Number(u.rooms) || 0;
+            const area   = u.area && Number(u.area) > 0 ? u.area : null;
+            const price  = u.price && Number(u.price) > 0 ? Number(u.price).toLocaleString('ar-SA') : '—';
+            const facing = toFacing(u.facing);
+            const facingAr = FACING_AR[facing] || '—';
+            const isRoof = (u.type === 2 || String(u.type||'').toLowerCase() === 'roof');
+            const typeBadge = isRoof
+              ? '<span class="u-type-badge u-type-roof">روف</span>'
+              : '<span class="u-type-badge u-type-apt">شقة</span>';
+
+            h += `<div class="unit-box ${css}" onclick='openModal(${JSON.stringify(u)})'>
+              <div class="unit-box-top">
+                <div class="u-num-row">
+                  <span class="u-num">${u.unitNumber}</span>
+                  ${typeBadge}
+                </div>
+                <div class="u-divider"></div>
+                <div class="u-info-row">🛏 ${rooms > 0 ? rooms + ' غرف' : '—'}</div>
+                ${area ? `<div class="u-info-row">📐 ${area} م²</div>` : ''}
+                <div class="u-facing-row">🧭 ${facingAr}</div>
+              </div>
+              <div class="unit-box-bottom">
+                <span class="u-status-dot"></span>
+                <span class="u-status-text">${stAr}</span>
+                <span style="font-size:.62rem;color:var(--text-muted);white-space:nowrap">${price}</span>
+              </div>
+            </div>`;
           });
-          h += '</div></div>';
+
+          h += `</div>`;
+          if (avail + resrv + sold > 0) {
+            h += `<div class="floor-legend">
+              ${avail > 0 ? `<span class="legend-item"><span class="legend-dot" style="background:var(--success)"></span>متاح (${avail})</span>` : ''}
+              ${resrv > 0 ? `<span class="legend-item"><span class="legend-dot" style="background:var(--warning)"></span>محجوز (${resrv})</span>` : ''}
+              ${sold  > 0 ? `<span class="legend-item"><span class="legend-dot" style="background:var(--danger)"></span>مباع (${sold})</span>` : ''}
+            </div>`;
+          }
+          h += `</div>`;
         });
+        if (!visibleFloors) { c.innerHTML = '<div class="empty-msg">لا توجد وحدات مطابقة</div>'; renderPagination(0); return; }
         h += '</div>';
         c.innerHTML = h;
         renderPagination(state.filteredData.length);
@@ -786,9 +811,10 @@
     }
   }
 
-  // ───── VIEW NAVIGATORS ─────
+  // ── NAVIGATORS ──
   async function showProjects() {
-    state.view = 'projects'; state.currentPage = 1; state.unitFilter = 'all';
+    state.view = 'projects'; state.currentPage = 1;
+    state.unitFilter = 'all'; state.roomsFilter = 0; state.facingFilter = 0;
     updateSearchPlaceholder('ابحث عن مشروع أو موقع...');
     document.getElementById('filterContainer').classList.remove('active');
     document.getElementById('breadcrumb').innerHTML = '<span class="current">المشاريع</span>';
@@ -801,7 +827,8 @@
   }
 
   async function showBuildings(projectId, projectName) {
-    state.view = 'buildings'; state.currentPage = 1; state.unitFilter = 'all';
+    state.view = 'buildings'; state.currentPage = 1;
+    state.unitFilter = 'all'; state.roomsFilter = 0; state.facingFilter = 0;
     state.params = { projectId: Number(projectId), projectName };
     updateSearchPlaceholder('ابحث عن اسم المبنى...');
     document.getElementById('filterContainer').classList.remove('active');
@@ -812,21 +839,23 @@
     updateHeader(`مباني ${projectName}`, 'اختر المبنى لعرض الأدوار وتفاصيل الوحدات');
     showLoader();
     const data = await apiFetch('/api/Buildings');
-    // ✅ FIX: تحويل كلا الجانبين إلى Number لضمان صحة المقارنة
     state.data = arr(data).filter(b => Number(b.projectId) === Number(projectId));
     state.filteredData = [...state.data];
     swapContent(renderCurrentView);
   }
 
   async function showUnits(buildingId, buildingName, projectId, projectName) {
-    state.view = 'units'; state.currentPage = 1; state.unitFilter = 'all';
+    state.view = 'units'; state.currentPage = 1;
+    state.unitFilter = 'all'; state.roomsFilter = 0; state.facingFilter = 0;
     updateSearchPlaceholder('ابحث برقم الوحدة...');
 
-    document.querySelectorAll('.filter-btn').forEach((b,i) => {
+    document.querySelectorAll('#statusFilterBtns .filter-btn').forEach((b,i) => {
       b.className = 'filter-btn' + (i===0?' active':'');
     });
-    document.getElementById('filterContainer').classList.add('active');
+    const fsel = document.getElementById('facingSelect');
+    if (fsel) fsel.value = 0;
 
+    document.getElementById('filterContainer').classList.add('active');
     document.getElementById('breadcrumb').innerHTML =
       `<span onclick="showProjects()">المشاريع</span>
        <span class="sep">/</span>
@@ -841,35 +870,46 @@
       apiFetch('/api/Units')
     ]);
 
-    // ✅ FIX: تحويل buildingId إلى Number في فلترة الأدوار
     const floors = arr(floorsData)
       .filter(f => Number(f.buildingId) === Number(buildingId))
       .sort((a,b) => (a.floorNumber??0) - (b.floorNumber??0));
-
     const units = arr(unitsData);
 
-    state.data         = floors;
+    state.data = floors;
     state.filteredData = [...floors];
-    state.params       = { projectId: Number(projectId), projectName, units };
+    state.params = { projectId: Number(projectId), projectName, units };
+
+    const bldUnits = units.filter(u => floors.some(f => Number(f.id) === Number(u.floorId)));
+    buildRoomsDropdown(bldUnits);
+
+    // show facing filter only if units have facing data
+    const hasFacing = bldUnits.some(u => toFacing(u.facing) > 0);
+    const fg = document.getElementById('facingFilterGroup');
+    if (fg) fg.style.display = hasFacing ? 'flex' : 'none';
+
     swapContent(renderCurrentView);
   }
 
-  // ───── MODAL ─────
+  // ── MODAL ──
   function openModal(unit) {
     const modal = document.getElementById('unitModal');
     document.getElementById('modalUnitTitle').innerText = `وحدة رقم ${unit.unitNumber}`;
-    const bc    = ST_BADGE[unit.status] || 'available';
-    const stAr  = ST_AR[unit.status]   || unit.status;
+    const bc   = ST_BADGE[unit.status] || 'available';
+    const stAr = ST_AR[unit.status]   || unit.status;
     const price = unit.price ? Number(unit.price).toLocaleString('ar-SA') + ' ر.س' : '—';
+    const facing = toFacing(unit.facing);
+    const facingAr = FACING_AR[facing] || '—';
+
     document.getElementById('modalUnitStatus').innerHTML =
-      `<span class="status-badge ${bc}">${stAr}</span>`;
+      `<span class="status-badge ${bc}">${stAr}</span>
+       ${facing > 0 ? `<span class="facing-badge">🧭 ${facingAr}</span>` : ''}`;
 
     const rows = [
       ['المساحة',    `${unit.area??'—'} م²`],
-      ['عدد الغرف',  `${unit.rooms??'—'} غرفة`],
+      ['عدد الغرف',  `${unit.rooms||'—'} غرفة`],
       ['السعر',      price],
-      unit.type        ? ['نوع الوحدة',   translateUnitType(unit.type)] : null,
-      unit.description ? ['الوصف',        unit.description] : null,
+      facing > 0 ? ['الواجهة', facingAr] : null,
+      unit.description ? ['الوصف', unit.description] : null,
     ].filter(Boolean);
 
     document.getElementById('modalBody').innerHTML = rows.map((r, i) =>
@@ -892,7 +932,6 @@
   window.addEventListener('click', e => { if (e.target === document.getElementById('unitModal')) closeModal(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-  // ───── INIT ─────
   showProjects();
 </script>
 </body>

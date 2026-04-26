@@ -8,12 +8,12 @@
 
   // تعريف الصفحات مع تحديد الأدوار المسموح لها بالدخول
   const PAGE_MAP = {
-    'dashboard':    { file: null,                    label: 'لوحة التحكم', roles: ['Admin', 'BookingManager', 'SiteEngineer', 'Buyer'] },
-    'projects':     { file: 'pages/projects.js',     label: 'المشاريع',    roles: ['Admin', 'SiteEngineer'] },
-    'buildings':    { file: 'pages/buildings.js',    label: 'البناء',      roles: ['Admin', 'SiteEngineer'] },
-    'reservations': { file: 'pages/reservations.js', label: 'الحجوزات',    roles: ['Admin', 'BookingManager', 'Buyer'] },
+    'dashboard':    { file: null,                    label: 'لوحة التحكم', roles: ['Admin'] },
+    'projects':     { file: 'pages/projects.js',     label: 'المشاريع',    roles: ['Admin'] },
+    'buildings':    { file: 'pages/buildings.js',    label: 'البناء',      roles: ['Admin'] },
+    'reservations': { file: 'pages/reservations.js', label: 'الحجوزات',    roles: ['Admin'] },
     'users':        { file: 'pages/users.js',        label: 'المستخدمين',  roles: ['Admin'] },
-    'buyers':       { file: 'pages/buyers.js',       label: 'المشترين',    roles: ['Admin', 'BookingManager'] },
+    'buyers':       { file: 'pages/buyers.js',       label: 'المشترين',    roles: ['Admin'] },
     'log':          { file: 'pages/log.js',          label: 'السجل',       roles: ['Admin'] },
   };
 
@@ -97,7 +97,7 @@
     if (pageId === currentPage) return;
     currentPage = pageId;
 
-    if (pushState) history.pushState({ page: pageId }, '', '#' + pageId);
+    if (pushState) history.pushState({ page: pageId }, '', ' ');
 
     updateNav(pageId);
 

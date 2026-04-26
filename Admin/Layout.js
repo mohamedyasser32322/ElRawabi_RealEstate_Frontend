@@ -442,7 +442,7 @@ function initLayout() {
   _buildDrawer();
 
   const userData = getUserData();
-  const userName = userData?.email ? userData.email.split('@')[0] : '—';
+  const userName = userData?.firstName || userData?.email?.split('@')[0] || '—';
   const userRole = userData?.role  || '—';
   const initials = userName !== '—' ? userName.slice(0, 2).toUpperCase() : '؟';
 

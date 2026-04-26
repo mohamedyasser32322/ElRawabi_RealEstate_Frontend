@@ -303,9 +303,9 @@
           <img id="bc-lb-img" src="" alt=""/>
           <div class="bc-lb-cap" id="bc-lb-cap"></div>
           <div class="bc-lb-bar">
-            <button class="bc-lb-btn" id="bc-lb-prev"><i class="ri-arrow-right-line"></i> السابقة</button>
+            <button class="bc-lb-btn" id="bc-lb-prev"><i class="ri-arrow-right-line"></i></button>
             <button class="bc-lb-btn" id="bc-lb-close"><i class="ri-close-line"></i> إغلاق</button>
-            <button class="bc-lb-btn" id="bc-lb-next"><i class="ri-arrow-left-line"></i> التالية</button>
+            <button class="bc-lb-btn" id="bc-lb-next"><i class="ri-arrow-left-line"></i></button>
           </div>
         </div>
 

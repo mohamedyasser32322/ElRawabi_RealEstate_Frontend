@@ -1,4 +1,4 @@
-/* PAGE MODULE: projects — SPA v3 (modified) */
+/* PAGE MODULE: projects — SPA v3 (merged) */
 (function () {
   window.__pages = window.__pages || {};
 
@@ -32,6 +32,7 @@
     .search-input:focus{outline:none;background:rgba(255,255,255,.1);border-color:var(--accent);box-shadow:0 0 0 3px rgba(78,141,245,.12)}
     .search-input::placeholder{color:var(--text-muted)}.search-icon{position:absolute;left:14px;color:var(--text-muted);font-size:1.15rem;pointer-events:none}
 
+    /* ── Filter bar with dropdowns for rooms & facing ── */
     #filterBar{display:none;gap:10px;flex-wrap:wrap;margin-bottom:20px;align-items:center;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:12px}
     .filter-section-label{font-size:.75rem;color:var(--text-muted);font-weight:700;white-space:nowrap}
     .filter-divider{width:1px;height:22px;background:var(--border);margin:0 4px}
@@ -43,19 +44,22 @@
     .pill.p-sold.active{background:rgba(255,59,48,.13);border-color:var(--danger);color:var(--danger)}
     .pill.p-closed.active{background:rgba(107,122,141,.15);border-color:var(--closed);color:var(--closed)}
 
-    .rooms-select-wrap{display:flex;align-items:center;gap:7px}
-    .rooms-select{
-      background:rgba(255,255,255,.06);color:var(--light);border:1px solid var(--border);
-      padding:6px 30px 6px 12px;border-radius:20px;font-family:inherit;font-size:.8rem;font-weight:600;
-      cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;
-      background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-      background-repeat:no-repeat;background-position:left 8px center;background-size:13px;
-      transition:var(--transition);min-width:120px;color-scheme:dark;
-    }
-    .rooms-select option{background:#0D2142;color:#dde8ff}
-    .rooms-select:hover{background-color:rgba(255,255,255,.1);border-color:rgba(255,255,255,.25)}
-    .rooms-select:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(78,141,245,.18)}
+    /* Rooms custom dropdown */
+    .rooms-dropdown-wrap{position:relative;display:inline-block}
+    .rooms-dropdown-btn{display:flex;align-items:center;gap:7px;padding:6px 14px;border-radius:20px;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--text-muted);font-family:inherit;font-size:.8rem;font-weight:600;cursor:pointer;transition:var(--transition);white-space:nowrap;user-select:none}
+    .rooms-dropdown-btn:hover{background:rgba(255,255,255,.09);color:var(--light)}
+    .rooms-dropdown-btn.active{background:rgba(78,141,245,.13);border-color:var(--accent);color:var(--accent)}
+    .rooms-dropdown-btn .dd-arrow{font-size:.75rem;transition:transform .2s ease}
+    .rooms-dropdown-btn.open .dd-arrow{transform:rotate(180deg)}
+    .rooms-dropdown-menu{display:none;position:absolute;top:calc(100% + 7px);right:0;background:#0e1f42;border:1px solid rgba(255,255,255,.12);border-radius:12px;min-width:150px;z-index:200;overflow:hidden;box-shadow:0 12px 32px rgba(0,0,0,.45);animation:slideDown .18s ease}
+    .rooms-dropdown-menu.open{display:block}
+    .rooms-dd-item{display:flex;align-items:center;gap:9px;padding:10px 16px;font-size:.83rem;font-weight:600;color:var(--text-muted);cursor:pointer;transition:background .15s}
+    .rooms-dd-item:hover{background:rgba(78,141,245,.1);color:var(--light)}
+    .rooms-dd-item.active{background:rgba(78,141,245,.15);color:var(--accent)}
+    .rooms-dd-item .dd-check{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:.6rem;flex-shrink:0;transition:var(--transition)}
+    .rooms-dd-item.active .dd-check{background:var(--accent);border-color:var(--accent);color:#fff}
 
+    /* Facing select */
     .facing-select-wrap{display:flex;align-items:center;gap:7px}
     .facing-select{
       background:rgba(255,255,255,.06);color:var(--light);border:1px solid var(--border);
@@ -87,7 +91,6 @@
     .p-card:hover .p-card-actions{opacity:1}
     .icon-btn{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text-muted);cursor:pointer;font-size:.85rem;transition:var(--transition)}
     .icon-btn.edit:hover{background:rgba(78,141,245,.18);color:var(--accent);border-color:var(--accent)}
-    .icon-btn.del:hover{background:rgba(255,59,48,.18);color:var(--danger);border-color:var(--danger)}
     .p-card-loc{font-size:.8rem;color:var(--text-muted);margin-bottom:12px;display:flex;align-items:center;gap:4px}
     .p-card-stats{display:flex;justify-content:space-between;border-top:1px solid var(--border);padding-top:13px}
     .ps-box{text-align:center;flex:1}.ps-num{font-weight:800;font-size:1rem;margin-bottom:2px}.ps-lbl{font-size:.62rem;text-transform:uppercase;letter-spacing:.5px}
@@ -121,17 +124,27 @@
     .floor-count{font-size:.73rem;color:var(--text-muted);background:rgba(255,255,255,.05);padding:3px 10px;border-radius:20px}
     .units-wrap{display:flex;flex-wrap:wrap;gap:9px;padding:14px 18px;direction:rtl;justify-content:flex-start;}
 
+    /* ── Unit card — new top/bottom design ── */
     .unit-box{
-      flex:0 0 auto;width:130px;border-radius:11px;cursor:pointer;
+      flex:0 0 auto;width:130px;
+      border-radius:11px;cursor:pointer;
       border:1.5px solid rgba(255,255,255,.1);
       transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
-      position:relative;overflow:hidden;display:flex;flex-direction:column;
+      position:relative;overflow:hidden;
+      display:flex;flex-direction:column;
     }
     .unit-box-top{padding:11px 12px 9px 14px;flex:1;display:flex;flex-direction:column;gap:0}
-    .unit-box-bottom{display:flex;align-items:center;gap:6px;padding:6px 12px 7px 14px;border-top:1px solid rgba(255,255,255,.07);}
+    .unit-box-bottom{
+      display:flex;align-items:center;gap:6px;
+      padding:6px 12px 7px 14px;
+      border-top:1px solid rgba(255,255,255,.07);
+    }
     .u-num-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px}
     .u-num{font-weight:800;font-size:1rem;color:var(--light);line-height:1.1}
-    .u-type-badge{display:inline-block;font-size:.6rem;padding:2px 7px;border-radius:20px;font-weight:700;white-space:nowrap;line-height:1.4;}
+    .u-type-badge{
+      display:inline-block;font-size:.6rem;padding:2px 7px;
+      border-radius:20px;font-weight:700;white-space:nowrap;line-height:1.4;
+    }
     .u-type-apt{background:rgba(78,141,245,.15);color:rgba(120,170,255,.9);border:1px solid rgba(78,141,245,.3)}
     .u-type-roof{background:rgba(155,89,182,.2);color:#c39bd3;border:1px solid rgba(155,89,182,.35)}
     .u-divider{height:1px;background:rgba(255,255,255,.06);margin:6px 0}
@@ -147,25 +160,25 @@
 
     .unit-box.st-available .unit-box-top{background:rgba(52,199,89,.07)}
     .unit-box.st-available{border-color:rgba(52,199,89,.3)}
-    .unit-box.st-available:hover{background:rgba(52,199,89,.04);border-color:var(--success);transform:scale(1.06);box-shadow:0 10px 24px rgba(52,199,89,.18)}
+    .unit-box.st-available:hover{border-color:var(--success);transform:scale(1.06);box-shadow:0 10px 24px rgba(52,199,89,.18)}
     .unit-box.st-available .u-status-dot{background:var(--success);box-shadow:0 0 6px var(--success)}
     .unit-box.st-available .u-status-text{color:rgba(52,199,89,.9)}
 
     .unit-box.st-reserved .unit-box-top{background:rgba(255,149,0,.07)}
     .unit-box.st-reserved{border-color:rgba(255,149,0,.3)}
-    .unit-box.st-reserved:hover{background:rgba(255,149,0,.04);border-color:var(--warning);transform:scale(1.06);box-shadow:0 10px 24px rgba(255,149,0,.15)}
+    .unit-box.st-reserved:hover{border-color:var(--warning);transform:scale(1.06);box-shadow:0 10px 24px rgba(255,149,0,.15)}
     .unit-box.st-reserved .u-status-dot{background:var(--warning);box-shadow:0 0 6px var(--warning)}
     .unit-box.st-reserved .u-status-text{color:rgba(255,149,0,.9)}
 
     .unit-box.st-sold .unit-box-top{background:rgba(255,59,48,.07)}
     .unit-box.st-sold{border-color:rgba(255,59,48,.3)}
-    .unit-box.st-sold:hover{background:rgba(255,59,48,.04);border-color:var(--danger);transform:scale(1.06);box-shadow:0 10px 24px rgba(255,59,48,.17)}
+    .unit-box.st-sold:hover{border-color:var(--danger);transform:scale(1.06);box-shadow:0 10px 24px rgba(255,59,48,.17)}
     .unit-box.st-sold .u-status-dot{background:var(--danger);box-shadow:0 0 6px var(--danger)}
     .unit-box.st-sold .u-status-text{color:rgba(255,59,48,.9)}
 
     .unit-box.st-closed .unit-box-top{background:rgba(107,122,141,.07)}
     .unit-box.st-closed{border-color:rgba(107,122,141,.25)}
-    .unit-box.st-closed:hover{background:rgba(107,122,141,.04);border-color:var(--closed);transform:scale(1.04)}
+    .unit-box.st-closed:hover{border-color:var(--closed);transform:scale(1.04)}
     .unit-box.st-closed .u-status-dot{background:var(--closed);box-shadow:0 0 4px rgba(107,122,141,.5)}
     .unit-box.st-closed .u-status-text{color:var(--closed)}
 
@@ -173,7 +186,6 @@
     .unit-box:hover .u-actions{opacity:1;transform:scale(1)}
     .u-icon-btn{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.12);background:rgba(8,24,48,.75);color:var(--light);cursor:pointer;font-size:.72rem;transition:var(--transition);padding:0}
     .u-icon-btn.edit:hover{background:rgba(78,141,245,.5);color:var(--accent);border-color:var(--accent)}
-    .u-icon-btn.del:hover{background:rgba(255,59,48,.5);color:var(--danger);border-color:var(--danger)}
 
     .floor-add-btn{flex:0 0 auto;min-width:80px;padding:12px 10px;border-radius:11px;background:rgba(78,141,245,.06);border:1.5px dashed rgba(78,141,245,.35);color:rgba(78,141,245,.65);font-family:inherit;font-size:.8rem;font-weight:700;cursor:pointer;transition:var(--transition);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
     .floor-add-btn i{font-size:1rem}
@@ -200,6 +212,8 @@
     .form-group{margin-bottom:15px}.form-label{display:block;font-size:.86rem;font-weight:700;margin-bottom:7px;color:var(--light)}
     .form-input,.form-select{width:100%;padding:11px 13px;border-radius:9px;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.1);color:#dde8ff;font-family:inherit;font-size:.88rem;transition:all .22s}
     .form-select{appearance:none;cursor:pointer;color-scheme:dark;color:#dde8ff;background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");background-repeat:no-repeat;background-position:right 10px center;background-size:16px;padding-right:36px}
+    .form-select:focus{animation:proj-dropOpen .18s cubic-bezier(.4,0,.2,1)}
+    @keyframes proj-dropOpen{from{opacity:.8;transform:scaleY(.97)}to{opacity:1;transform:scaleY(1)}}
     .form-select option{background:#0D2142;color:#dde8ff}
     .form-input:focus,.form-select:focus{outline:none;background:rgba(255,255,255,.08);border-color:var(--accent);box-shadow:0 0 0 3px rgba(78,141,245,.13)}
     .form-row{display:grid;grid-template-columns:1fr 1fr;gap:11px}
@@ -238,11 +252,6 @@
     .btn-submit:hover:not(:disabled){background:#3a7de4;transform:translateY(-1px)}.btn-submit:disabled{opacity:.6;cursor:not-allowed}
     .btn-cancel{padding:10px 20px;border-radius:9px;background:rgba(255,255,255,.05);color:var(--light);border:1px solid rgba(255,255,255,.12);font-family:inherit;font-size:.88rem;font-weight:600;cursor:pointer;transition:all .22s}
     .btn-cancel:hover{background:rgba(255,255,255,.09)}
-    .btn-danger{display:flex;align-items:center;gap:6px;padding:10px 18px;border-radius:9px;background:var(--danger);color:#fff;border:none;font-family:inherit;font-size:.88rem;font-weight:700;cursor:pointer;transition:var(--transition)}
-    .btn-danger:hover{background:#e62c21}
-    .confirm-box{text-align:center;padding:8px}.confirm-icon{font-size:2.8rem;margin-bottom:14px}
-    .confirm-msg{font-size:.92rem;color:var(--text-muted);line-height:1.65;margin-bottom:22px}
-    .confirm-actions{display:flex;gap:12px;justify-content:center}
 
     #proj-toast-container{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none}
     .proj-toast{display:flex;align-items:center;gap:10px;padding:13px 17px;border-radius:9px;background:rgba(5,18,42,.97);border:1px solid rgba(255,255,255,.08);color:var(--light);font-size:.88rem;font-weight:600;animation:slideDown .28s ease;box-shadow:0 8px 24px rgba(0,0,0,.35);pointer-events:all}
@@ -251,6 +260,7 @@
     @media(max-width:768px){.form-row{grid-template-columns:1fr}.unit-detail-grid{grid-template-columns:1fr}.unit-box{width:100px}#filterBar{flex-direction:column;align-items:flex-start}}
   `;
 
+  /* ─── INIT ─── */
   window.__pages['projects'] = {
     getCSS: function () { return _css; },
     init: async function () {
@@ -287,12 +297,8 @@
             <button class="pill" data-cls="pill" data-active-cls="p-closed" onclick="window.setFilter(4,this)">مقفول</button>
           </div>
           <div class="filter-divider"></div>
-          <div class="rooms-select-wrap" id="roomsSelectWrap" style="display:none;">
-            <span class="filter-section-label">الغرف:</span>
-            <select class="rooms-select" id="roomsSelectEl" onchange="window.setRoomsFilter(Number(this.value), null)">
-              <option value="0">كل الغرف</option>
-            </select>
-          </div>
+          <span class="filter-section-label">الغرف:</span>
+          <div id="roomsDropdownContainer"></div>
           <div class="facing-select-wrap" id="facingSelectWrap" style="display:none;">
             <span class="filter-section-label">الواجهة:</span>
             <select class="facing-select" id="facingSelectEl" onchange="window.setFacingFilter(Number(this.value))">
@@ -312,6 +318,10 @@
       }, { signal: window.__pageAbortSignal });
       document.addEventListener('keydown', e => {
         if (e.key === 'Escape' && document.getElementById('proj-modal')?.style.display !== 'none') closeModal();
+      }, { signal: window.__pageAbortSignal });
+      document.addEventListener('click', e => {
+        const wrap = document.querySelector('.rooms-dropdown-wrap');
+        if (wrap && !wrap.contains(e.target)) _closeRoomsDropdown();
       }, { signal: window.__pageAbortSignal });
 
       const API_BASE = `http://${window.location.hostname}:5256`;
@@ -403,15 +413,25 @@
         if(typeof val==='number')return val;
         return {'available':1,'reserved':2,'sold':3,'closed':4,'Available':1,'Reserved':2,'Sold':3,'Closed':4}[val]??4;
       }
+      // unit type: 1=apartment, 2=roof  (matches v1 / الصفحة المرجعية)
       function toType(val){
         if(val===null||val===undefined)return 1;
         if(typeof val==='number')return val;
-        return {'apartment':1,'Apartment':1,'roof':2,'Roof':2,'typicalfloor':1,'TypicalFloor':1,'groundfloor':1,'GroundFloor':1}[val]??1;
+        return {
+          'apartment':1,'Apartment':1,
+          'roof':2,'Roof':2,
+          'typicalfloor':1,'TypicalFloor':1,
+          'groundfloor':1,'GroundFloor':1,
+        }[val]??1;
       }
       function toFacing(val){
         if(val===null||val===undefined||val===0||val==='0')return 0;
         if(typeof val==='number')return val;
-        return {'frontonstreet':1,'frontonestreet':1,'FrontOneStreet':1,'fronttwострeets':2,'fronttwostreets':2,'FrontTwoStreets':2,'back':3,'Back':3}[val]??1;
+        return {
+          'frontonstreet':1,'frontonestreet':1,'FrontOneStreet':1,
+          'fronttwostreets':2,'FrontTwoStreets':2,
+          'back':3,'Back':3
+        }[val]??1;
       }
       function computeStats(units){
         return{
@@ -433,23 +453,60 @@
       }
       function buyerName(b){if(!b)return'—';return `${b.firstName||''} ${b.lastName||''}`.trim()||'—';}
 
-      let _st = null;
-      function handleSearch(){clearTimeout(_st);_st=setTimeout(doSearch,150);}
-
-      function setFilter(f,btn){
-        S.filter=f;
-        document.querySelectorAll('#statusPills .pill').forEach(b=>{b.className=b.dataset.cls||'pill';});
-        btn.classList.add('active');if(btn.dataset.activeCls)btn.classList.add(btn.dataset.activeCls);
-        doSearch();
+      /* ── Custom Rooms Dropdown ── */
+      function _closeRoomsDropdown(){
+        const menu=document.getElementById('roomsDDMenu');
+        const btn=document.getElementById('roomsDDBtn');
+        if(menu)menu.classList.remove('open');
+        if(btn)btn.classList.remove('open');
       }
-
-      function setRoomsFilter(val, _btn){
+      function buildRoomsDropdown(roomSet){
+        const container=document.getElementById('roomsDropdownContainer');
+        if(!container)return;
+        const activeLabel = S.roomsFilter===0 ? 'الكل' : `${S.roomsFilter} غرف`;
+        const isActive = S.roomsFilter !== 0;
+        container.innerHTML = `
+          <div class="rooms-dropdown-wrap">
+            <div class="rooms-dropdown-btn${isActive?' active':''}" id="roomsDDBtn" onclick="window._toggleRoomsDD()">
+              <i class="ri-hotel-bed-line" style="font-size:.82rem"></i>
+              <span id="roomsDDLabel">${activeLabel}</span>
+              <i class="ri-arrow-down-s-line dd-arrow"></i>
+            </div>
+            <div class="rooms-dropdown-menu" id="roomsDDMenu">
+              <div class="rooms-dd-item${S.roomsFilter===0?' active':''}" onclick="window._pickRoom(0)">
+                <span class="dd-check">${S.roomsFilter===0?'<i class="ri-check-line"></i>':''}</span>
+                <span>الكل</span>
+              </div>
+              ${roomSet.map(r=>`
+                <div class="rooms-dd-item${S.roomsFilter===r?' active':''}" onclick="window._pickRoom(${r})">
+                  <span class="dd-check">${S.roomsFilter===r?'<i class="ri-check-line"></i>':''}</span>
+                  <span>${r} غرف</span>
+                </div>`).join('')}
+            </div>
+          </div>`;
+      }
+      window._toggleRoomsDD = function(){
+        const menu=document.getElementById('roomsDDMenu');
+        const btn=document.getElementById('roomsDDBtn');
+        if(!menu||!btn)return;
+        const open=menu.classList.contains('open');
+        menu.classList.toggle('open',!open);
+        btn.classList.toggle('open',!open);
+      };
+      window._pickRoom = function(val){
         S.roomsFilter=Number(val);
-        const sel=document.getElementById('roomsSelectEl');
-        if(sel) sel.value=val;
+        _closeRoomsDropdown();
+        const label=document.getElementById('roomsDDLabel');
+        const btn=document.getElementById('roomsDDBtn');
+        if(label)label.textContent=val===0?'الكل':`${val} غرف`;
+        if(btn)btn.classList.toggle('active',val!==0);
         doSearch();
-      }
+      };
 
+      function showFacingDropdown(show){
+        const wrap=document.getElementById('facingSelectWrap');
+        if(wrap) wrap.style.display=show?'flex':'none';
+      }
       function setFacingFilter(val){
         S.facingFilter=Number(val);
         const sel=document.getElementById('facingSelectEl');
@@ -457,22 +514,14 @@
         doSearch();
       }
 
-      function buildRoomsDropdown(roomSet){
-        const wrap=document.getElementById('roomsSelectWrap');
-        const sel=document.getElementById('roomsSelectEl');
-        if(!wrap||!sel)return;
-        if(!roomSet||roomSet.length===0){wrap.style.display='none';return;}
-        sel.innerHTML='<option value="0">كل الغرف</option>'+
-          roomSet.map(r=>`<option value="${r}">${r} غرف</option>`).join('');
-        sel.value=S.roomsFilter;
-        wrap.style.display='flex';
+      let _st = null;
+      function handleSearch(){clearTimeout(_st);_st=setTimeout(doSearch,150);}
+      function setFilter(f,btn){
+        S.filter=f;
+        document.querySelectorAll('#statusPills .pill').forEach(b=>{b.className=b.dataset.cls||'pill';});
+        btn.classList.add('active');if(btn.dataset.activeCls)btn.classList.add(btn.dataset.activeCls);
+        doSearch();
       }
-
-      function showFacingDropdown(show){
-        const wrap=document.getElementById('facingSelectWrap');
-        if(wrap) wrap.style.display=show?'flex':'none';
-      }
-
       function getFloorUnits(floorId){
         return(S.params.units||[]).filter(u=>{
           if(Number(u.floorId)!==Number(floorId))return false;
@@ -516,7 +565,6 @@
                   <div class="p-card-title-wrap"><div class="p-card-title">${esc(p.name)}</div></div>
                   <div class="p-card-actions">
                     <button class="icon-btn edit" onclick="event.stopPropagation();window.editProject(${p.id})"><i class="ri-edit-line"></i></button>
-                    <button class="icon-btn del" onclick="event.stopPropagation();window.deleteProject(${p.id},'${esc(p.name)}')"><i class="ri-delete-bin-line"></i></button>
                   </div>
                 </div>
                 <div class="p-card-loc"><i class="ri-map-pin-line"></i>${esc(p.location)}</div>
@@ -552,7 +600,6 @@
                   </div>
                   <div class="b-card-actions">
                     <div class="icon-btn edit" onclick="event.stopPropagation();window.editBuilding(${b.id})"><i class="ri-edit-line"></i></div>
-                    <div class="icon-btn del" onclick="event.stopPropagation();window.deleteBuilding(${b.id},'${esc(b.name)}')"><i class="ri-delete-bin-line"></i></div>
                   </div>
                 </div>
                 <div class="p-card-stats" style="margin-top:12px">
@@ -576,12 +623,14 @@
           showFacingDropdown(true);
 
           const floorsToShow=S.filter===0&&S.roomsFilter===0&&S.facingFilter===0?S.data:S.data.filter(f=>getFloorUnits(f.id).length>0);
-          if(!floorsToShow.length){c.innerHTML='<div class="empty-msg"><i class="ri-layout-2-line"></i>لا توجد وحدات مطابقة</div>';renderPag(0);return;}
-          const pagFloors=floorsToShow.slice((S.page-1)*PER_PAGE,S.page*PER_PAGE);
+          const sortedFloors=[...floorsToShow].sort((a,b)=>(b.floorNumber??0)-(a.floorNumber??0));
+
+          if(!sortedFloors.length){c.innerHTML='<div class="empty-msg"><i class="ri-layout-2-line"></i>لا توجد وحدات مطابقة</div>';renderPag(0);return;}
+          const pagFloors=sortedFloors.slice((S.page-1)*PER_PAGE,S.page*PER_PAGE);
           let h='<div class="floor-map">';
           pagFloors.forEach((f,fi)=>{
             const fu=getFloorUnits(f.id);
-            const isRoof=!!(f.isRoof||f.type===3||String(f.type).toLowerCase()==="roof");
+            const isRoof=!!(f.isRoof||f.type===3||String(f.type).toLowerCase()==='roof');
             const floorLabel=isRoof?`الدور ${f.floorNumber} <span class="roof-badge">روف</span>`:`الدور ${f.floorNumber}`;
             const avail=fu.filter(u=>toStatus(u.status)===1).length;
             const resrv=fu.filter(u=>toStatus(u.status)===2).length;
@@ -607,7 +656,6 @@
               h+=`<div class="unit-box ${css}" onclick="window.openUnitDetail(${u.id})">
                 <div class="u-actions">
                   <button class="u-icon-btn edit" onclick="event.stopPropagation();window.editUnit(${u.id})"><i class="ri-edit-line"></i></button>
-                  <button class="u-icon-btn del" onclick="event.stopPropagation();window.deleteUnit(${u.id},'${esc(String(u.unitNumber))}')"><i class="ri-delete-bin-line"></i></button>
                 </div>
                 <div class="unit-box-top">
                   <div class="u-num-row">
@@ -636,7 +684,7 @@
             </div>`;
             h+='</div>';
           });
-          h+='</div>';c.innerHTML=h;renderPag(floorsToShow.length);
+          h+='</div>';c.innerHTML=h;renderPag(sortedFloors.length);
         }
       }
 
@@ -655,9 +703,8 @@
         if(show){
           document.querySelectorAll('#statusPills .pill').forEach((b,i)=>{b.className=b.dataset.cls||'pill';if(i===0)b.classList.add('active');});
           S.filter=0;S.roomsFilter=0;S.facingFilter=0;
-          const sel=document.getElementById('roomsSelectEl');if(sel)sel.value=0;
+          const rc=document.getElementById('roomsDropdownContainer');if(rc)rc.innerHTML='';
           const fsel=document.getElementById('facingSelectEl');if(fsel)fsel.value=0;
-          const wrap=document.getElementById('roomsSelectWrap');if(wrap)wrap.style.display='none';
           showFacingDropdown(false);
         }
       }
@@ -763,21 +810,6 @@
         catch(e){toast(`فشل: ${e.message}`,'error');}
         setBusy('submitBtn',false);
       }
-      function deleteProject(id,name){
-        openModal('حذف المشروع',`<div class="modal-body"><div class="confirm-box">
-          <div class="confirm-icon">🗑️</div>
-          <p class="confirm-msg">هل أنت متأكد من حذف مشروع <strong>${esc(name)}</strong>؟<br>سيتم حذف جميع المباني والوحدات المرتبطة.</p>
-          <div class="confirm-actions">
-            <button class="btn-danger" id="submitBtn" onclick="window.confirmDeleteProject(${id})"><i class="ri-delete-bin-line"></i>نعم، احذف</button>
-            <button class="btn-cancel" onclick="window.closeModal()">إلغاء</button>
-          </div></div></div>`);
-      }
-      async function confirmDeleteProject(id){
-        setBusy('submitBtn',true,'احذف');
-        try{await DELETE(`/api/Projects/${id}`);toast('تم الحذف');closeModal();await showProjects();}
-        catch(e){toast(`فشل: ${e.message}`,'error');}
-        setBusy('submitBtn',false,'احذف');
-      }
 
       /* ── BUILDINGS CRUD ── */
       function openAddBuilding(projectId){
@@ -831,21 +863,6 @@
             <div class="modal-footer"><button class="btn-cancel" onclick="window.closeModal()">إغلاق</button></div>`);
         }catch{toast('فشل تحميل البيانات','error');}
       }
-      function deleteBuilding(id,name){
-        openModal('حذف المبنى',`<div class="modal-body"><div class="confirm-box">
-          <div class="confirm-icon">🗑️</div>
-          <p class="confirm-msg">هل أنت متأكد من حذف مبنى <strong>${esc(name)}</strong>؟</p>
-          <div class="confirm-actions">
-            <button class="btn-danger" id="submitBtn" onclick="window.confirmDeleteBuilding(${id})"><i class="ri-delete-bin-line"></i>نعم، احذف</button>
-            <button class="btn-cancel" onclick="window.closeModal()">إلغاء</button>
-          </div></div></div>`);
-      }
-      async function confirmDeleteBuilding(id){
-        setBusy('submitBtn',true,'احذف');
-        try{await DELETE(`/api/Buildings/${id}`);toast('تم الحذف');closeModal();await showBuildings(S.params.projectId,S.params.projectName,S.params.projectCode);}
-        catch(e){toast(`فشل: ${e.message}`,'error');}
-        setBusy('submitBtn',false,'احذف');
-      }
 
       /* ── FLOORS CRUD ── */
       function openAddFloor(buildingId){
@@ -867,12 +884,13 @@
         if(S.data.find(f=>f.floorNumber===floorNumber)){toast('رقم الدور موجود مسبقاً','error');return;}
         setBusy('submitBtn',true);
         const isRoof=ftype===3;
+        const unitType=isRoof?2:1;
         try{
           const floorRes=await POST('/api/Floors',{buildingId:Number(buildingId),floorNumber,isRoof,type:ftype});
           const floorId=floorRes?.id||floorRes?.floorId;
           if(floorId)await Promise.allSettled([
-            POST('/api/Units',{unitNumber:`${floorNumber}01`,type:isRoof?2:1,status:1,facing:0,area:0,rooms:0,price:0,floorId:Number(floorId)}),
-            POST('/api/Units',{unitNumber:`${floorNumber}02`,type:isRoof?2:1,status:1,facing:0,area:0,rooms:0,price:0,floorId:Number(floorId)})
+            POST('/api/Units',{unitNumber:`${floorNumber}01`,type:unitType,status:1,facing:0,area:0,rooms:0,price:0,floorId:Number(floorId)}),
+            POST('/api/Units',{unitNumber:`${floorNumber}02`,type:unitType,status:1,facing:0,area:0,rooms:0,price:0,floorId:Number(floorId)})
           ]);
           toast('تم إضافة الدور مع وحدتين');closeModal();
           await showUnits(buildingId,S.params.buildingName,S.params.buildingCode);
@@ -911,17 +929,24 @@
       function uStatusOpts(sel=1){const selNum=toStatus(sel);return [{v:1,l:'متاح'},{v:2,l:'محجوز'},{v:3,l:'مباع'},{v:4,l:'مقفول'}].map(o=>`<option value="${o.v}" ${selNum===o.v?'selected':''}>${o.l}</option>`).join('');}
       function uTypeOpts(sel=1){const selNum=toType(sel);return [{v:1,l:'شقة'},{v:2,l:'روف'}].map(o=>`<option value="${o.v}" ${selNum===o.v?'selected':''}>${o.l}</option>`).join('');}
       function uFacingOpts(sel=0){const selNum=toFacing(sel);return [
-        {v:0,l:'— غير محدد —'},{v:1,l:'أمامي على شارع'},{v:2,l:'أمامي على شارعين'},{v:3,l:'خلفي'}
+        {v:0,l:'— غير محدد —'},
+        {v:1,l:'أمامي على شارع'},
+        {v:2,l:'أمامي على شارعين'},
+        {v:3,l:'خلفي'}
       ].map(o=>`<option value="${o.v}" ${selNum===o.v?'selected':''}>${o.l}</option>`).join('');}
 
+      window.calcRemaining = function(){
+        const price=parseFloat(v('f-uprice'))||0,paid=parseFloat(v('f-bpaid'))||0;
+        const ri=document.getElementById('f-bremain');if(ri)ri.value=Math.max(0,price-paid);
+      };
       window.handleUnitStatusChange = function(sel){
-        const section=document.getElementById('clientPickerSection');if(!section)return;
+        const section=document.getElementById('clientPickerSection'),finSection=document.getElementById('bookingFinancials');if(!section)return;
         const st=Number(sel.value);
         if(st===2||st===3){
-          section.style.display='block';
+          section.style.display='block';if(finSection)finSection.style.display='block';
           const txt=document.getElementById('cPickerText');if(txt)txt.textContent=(st===3?'مباع لـ':'محجوز لـ');
         }else{
-          section.style.display='none';_selectedBuyerId=null;
+          section.style.display='none';if(finSection)finSection.style.display='none';_selectedBuyerId=null;
         }
       };
 
@@ -942,14 +967,20 @@
           </div>
           <div class="form-row">
             <div class="form-group"><label class="form-label">المساحة (م²)</label><input id="f-uarea" class="form-input" type="number" step="0.5" value="0"></div>
-            <div class="form-group"><label class="form-label">السعر (ر.س)</label><input id="f-uprice" class="form-input" type="number" step="1000" value="0"></div>
+            <div class="form-group"><label class="form-label">السعر (ر.س)</label><input id="f-uprice" class="form-input" type="number" step="1000" value="0" oninput="window.calcRemaining()"></div>
           </div>
           <div class="form-group">
-            <label class="form-label"><i class="ri-compass-3-line" style="color:var(--accent)"></i> الواجهة *</label>
-            <select id="f-ufacing" class="form-select">${uFacingOpts(1)}</select>
+            <label class="form-label"><i class="ri-compass-3-line" style="color:var(--accent)"></i> الواجهة</label>
+            <select id="f-ufacing" class="form-select">${uFacingOpts(0)}</select>
           </div>
           <div id="clientPickerSection" style="display:none">
             <div class="client-picker-label"><i class="ri-user-line"></i>اختر العميل *</div>${buildClientPicker(null)}
+          </div>
+          <div id="bookingFinancials" style="display:none;margin-top:10px">
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">المبلغ المدفوع (المقدم)</label><input id="f-bpaid" class="form-input" type="number" min="0" value="0" oninput="window.calcRemaining()"></div>
+              <div class="form-group"><label class="form-label">المبلغ المتبقي</label><input id="f-bremain" class="form-input" type="number" min="0" value="0" readonly style="background:rgba(0,0,0,.2);opacity:.8;cursor:not-allowed"></div>
+            </div>
           </div>
         </div>
         <div class="modal-footer">
@@ -972,7 +1003,8 @@
           const newUnit=await POST('/api/Units',{unitNumber,type:utype,status:backendStatus,facing,area,rooms,price,floorId:Number(floorId),buyerId:null});
           const unitId=newUnit?.id||newUnit?.unitId;
           if(unitId&&(status===2||status===3)){
-            await POST('/api/Bookings',{status:status===3?2:1,amountPaid:0,remainingAmount:0,buyerId:_selectedBuyerId,unitId});
+            const bPaid=Number(v('f-bpaid'))||0,bRemain=Number(v('f-bremain'))||0;
+            await POST('/api/Bookings',{status:status===3?2:1,amountPaid:bPaid,remainingAmount:bRemain,buyerId:_selectedBuyerId,unitId});
             if(status===3)await PUT(`/api/Units/${unitId}`,{unitNumber,type:utype,status:3,facing,area,rooms,price,floorId:Number(floorId),buyerId:_selectedBuyerId});
           }
           toast('تم إضافة الوحدة');closeModal();
@@ -986,11 +1018,11 @@
         try{
           const u=await GET(`/api/Units/${id}`);
           const currStatus=toStatus(u.status),currType=toType(u.type),currFacing=toFacing(u.facing);
-          let bookingIdFromApi=null;
+          let bPaid=0,bRemain=0,bookingIdFromApi=null;
           if(u.bookingId){
             try{
               const b=await GET(`/api/Bookings/${u.bookingId}`);
-              if(b){bookingIdFromApi=b.id;}
+              if(b){bPaid=b.amountPaid||0;bRemain=b.remainingAmount||0;bookingIdFromApi=b.id;}
             }catch{}
           }
           openModal('تعديل الوحدة',`<div class="modal-body">
@@ -1004,15 +1036,21 @@
             </div>
             <div class="form-row">
               <div class="form-group"><label class="form-label">المساحة (م²)</label><input id="f-uarea" class="form-input" type="number" step="0.5" value="${u.area||0}"></div>
-              <div class="form-group"><label class="form-label">السعر (ر.س)</label><input id="f-uprice" class="form-input" type="number" step="1000" value="${u.price||0}"></div>
+              <div class="form-group"><label class="form-label">السعر (ر.س)</label><input id="f-uprice" class="form-input" type="number" step="1000" value="${u.price||0}" oninput="window.calcRemaining()"></div>
             </div>
             <div class="form-group">
-              <label class="form-label"><i class="ri-compass-3-line" style="color:var(--accent)"></i> الواجهة *</label>
+              <label class="form-label"><i class="ri-compass-3-line" style="color:var(--accent)"></i> الواجهة</label>
               <select id="f-ufacing" class="form-select">${uFacingOpts(currFacing)}</select>
             </div>
             <div id="clientPickerSection" style="display:${currStatus===2||currStatus===3?'block':'none'}">
               <div class="client-picker-label"><i class="ri-user-line"></i><span id="cPickerText">${currStatus===3?'مباع لـ':'محجوز لـ'}</span> *</div>
               ${buildClientPicker(u.buyerId||null)}
+            </div>
+            <div id="bookingFinancials" style="display:${currStatus===2||currStatus===3?'block':'none'};margin-top:10px">
+              <div class="form-row">
+                <div class="form-group"><label class="form-label">المبلغ المدفوع</label><input id="f-bpaid" class="form-input" type="number" min="0" value="${bPaid}" oninput="window.calcRemaining()"></div>
+                <div class="form-group"><label class="form-label">المبلغ المتبقي</label><input id="f-bremain" class="form-input" type="number" min="0" value="${bRemain}" readonly style="background:rgba(0,0,0,.2);opacity:.8;cursor:not-allowed"></div>
+              </div>
             </div>
           </div>
           <div class="modal-footer">
@@ -1020,7 +1058,7 @@
             <button class="btn-cancel" onclick="window.closeModal()">إلغاء</button>
           </div>`,true);
           _selectedBuyerId=u.buyerId||null;
-          setTimeout(()=>renderClientList(''),50);
+          setTimeout(()=>{renderClientList('');window.calcRemaining();},50);
         }catch(e){console.error(e);toast('فشل تحميل بيانات الوحدة','error');}
       }
 
@@ -1028,6 +1066,7 @@
         const unitNumber=v('f-unum'),utype=Number(v('f-utype')),status=Number(v('f-ustatus'));
         const rooms=Number(v('f-urooms'))||0,area=Number(v('f-uarea'))||0,price=Number(v('f-uprice'))||0;
         const facing=Number(v('f-ufacing'))||0;
+        const bPaid=Number(v('f-bpaid'))||0,bRemain=Number(v('f-bremain'))||0;
         if(!unitNumber){toast('يرجى إدخال رقم الوحدة','error');return;}
         if((status===2||status===3)&&!_selectedBuyerId){toast('يرجى اختيار عميل','error');return;}
         setBusy('submitBtn',true);
@@ -1035,12 +1074,12 @@
           const isNowBooked=(status===2||status===3);
           const wasBooked=(oldStatus===2||oldStatus===3);
           const bookingStatusId=status===3?2:1;
-          const newBuyerId = isNowBooked ? _selectedBuyerId : null;
+          const newBuyerId=isNowBooked?_selectedBuyerId:null;
           await PUT(`/api/Units/${id}`,{unitNumber,type:utype,status,facing,area,rooms,price,floorId:Number(floorId),buyerId:newBuyerId});
           if(isNowBooked&&!wasBooked){
-            await POST('/api/Bookings',{status:bookingStatusId,amountPaid:0,remainingAmount:0,buyerId:_selectedBuyerId,unitId:id});
+            await POST('/api/Bookings',{status:bookingStatusId,amountPaid:bPaid,remainingAmount:bRemain,buyerId:_selectedBuyerId,unitId:id});
           } else if(isNowBooked&&wasBooked&&existingBookingId&&existingBookingId!=='null'){
-            await PUT(`/api/Bookings/${existingBookingId}`,{status:bookingStatusId,amountPaid:0,remainingAmount:0,buyerId:_selectedBuyerId,unitId:id});
+            await PUT(`/api/Bookings/${existingBookingId}`,{status:bookingStatusId,amountPaid:bPaid,remainingAmount:bRemain,buyerId:_selectedBuyerId,unitId:id});
           } else if(!isNowBooked&&wasBooked&&existingBookingId&&existingBookingId!=='null'){
             await DELETE(`/api/Bookings/${existingBookingId}`);
           }
@@ -1048,22 +1087,6 @@
           await showUnits(S.params.buildingId,S.params.buildingName,S.params.buildingCode);
         }catch(e){toast(`فشل: ${e.message}`,'error');}
         setBusy('submitBtn',false);
-      }
-
-      function deleteUnit(id,num){
-        openModal('حذف الوحدة',`<div class="modal-body"><div class="confirm-box">
-          <div class="confirm-icon">🗑️</div>
-          <p class="confirm-msg">هل أنت متأكد من حذف وحدة رقم <strong>${esc(String(num))}</strong>؟</p>
-          <div class="confirm-actions">
-            <button class="btn-danger" id="submitBtn" onclick="window.confirmDeleteUnit(${id})"><i class="ri-delete-bin-line"></i>نعم، احذف</button>
-            <button class="btn-cancel" onclick="window.closeModal()">إلغاء</button>
-          </div></div></div>`);
-      }
-      async function confirmDeleteUnit(id){
-        setBusy('submitBtn',true,'احذف');
-        try{await DELETE(`/api/Units/${id}`);toast('تم الحذف');closeModal();await showUnits(S.params.buildingId,S.params.buildingName,S.params.buildingCode);}
-        catch(e){toast(`فشل: ${e.message}`,'error');}
-        setBusy('submitBtn',false,'احذف');
       }
 
       async function openUnitDetail(unitId){
@@ -1087,7 +1110,7 @@
             ${buyer?.email?`<div class="ci-sub">${esc(buyer.email)}</div>`:''}
           </div></div>`:'';
         openModal(`وحدة ${esc(unitRef)}`,`<div class="modal-body">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap">
             <span class="status-badge ${bc}">${stAr}</span>
             <span style="font-size:.78rem;padding:4px 10px;border-radius:8px;background:rgba(255,255,255,.06);color:var(--text-muted)">${typeLabel}</span>
             <span style="font-size:.78rem;padding:4px 10px;border-radius:8px;background:rgba(78,141,245,.08);color:var(--accent);border:1px solid rgba(78,141,245,.2)"><i class="ri-compass-3-line"></i> ${facingAr}</span>
@@ -1110,11 +1133,11 @@
 
       Object.assign(window, {
         showProjects, showBuildings, showUnits,
-        openAddProject, submitAddProject, editProject, submitEditProject, deleteProject, confirmDeleteProject,
-        openAddBuilding, submitAddBuilding, editBuilding, deleteBuilding, confirmDeleteBuilding,
+        openAddProject, submitAddProject, editProject, submitEditProject,
+        openAddBuilding, submitAddBuilding, editBuilding,
         openAddFloor, submitAddFloor,
-        openAddUnit, submitAddUnit, editUnit, submitEditUnit, deleteUnit, confirmDeleteUnit,
-        openUnitDetail, handleSearch, setFilter, setRoomsFilter, setFacingFilter, goPage, buildRoomsDropdown,
+        openAddUnit, submitAddUnit, editUnit, submitEditUnit,
+        openUnitDetail, handleSearch, setFilter, setFacingFilter, goPage,
       });
 
       await showProjects();
